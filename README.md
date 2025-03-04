@@ -16,8 +16,12 @@
 ### Installation
 
 ```bash
-git clone https://github.com/mike52ten11/PSSE.git
+git clone https://github.com/mike52ten11/psse.git
+```
+```bash
 cd PSSE
+```
+```bash
 pip install -r requirements.txt
 ```
 ===================================
