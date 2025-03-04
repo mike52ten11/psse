@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .autocomplete-dropdown {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #f5f5f5;
+  }
+  .autocomplete-container {
+    position: relative;
+    z-index: 1000;
+  }  
+  /* Ensure the card doesn't clip the dropdown */
+  .card {
+    overflow: visible !important;
+  }
+
+  .card-body {
+    overflow: visible !important;
+  }  
+  </style>
+<section class="inner-page">
+  <div class="container">
+    <form method="GET" action="{% url 'write_to_savfile_for_area' %}">
+      <br>
+      <div style="text-align: center; font-size:14pt;">
+        <div>
+          {% for year in years %}
+            <input type="checkbox" id="{{ year }}" name="year" value="{{ year }}">
+            <label for="{{ year }}">{{ year }}</label>
+          {% endfor %}
+        </div>
+      </div>
+      <br>
+      <input type="submit" style='font-size:12pt;' class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="write" value="確定新增">
+      
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary" style="font-size:10pt;">AREA Data of {{ USER }}</h6>
+        </div>
+        <div class="card-body">
+          <!-- class="table-responsive"  會有捲動條的-->
+          <div  style="font-size:10pt;"> 
+            <table style="position: relative;">
+              <tr>
+                <td>AREA Number</td> 
+                <td>
+                  <div class="autocomplete-container" style="position: relative;">
+                    <input type="text" id="AREANumberInput" name="AREANumber" pattern="[0-9]+" required>
+                    <div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                    </div>
+                  </div>
+                </td>  
+              </tr>
+              <tr>
+                <td>AREA Name</td>
+                <td><input type="text" name="AREAName" required></td>
+              </tr>
+              <tr>
+                <td>&nbsp</td>
+                
+              </tr> 
+            </table>
+            
+            <!-- 顯示已新增的暫存資料 -->
+            {% if temp_labeldata %}
+            <div class="mt-4">
+              <h6 class="font-weight-bold">已新增的內容：</h6>
+              {% for area in temp_labeldata %}
+              <div class="mt-2">
+                Area Number: {{ area.area_number }}, Area Name: {{ area.area_name }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  window.areaData = window.areaData || [];
+  // let busData = [];
+  const AREANumberInput = document.getElementById('AREANumberInput');
+  const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+  
+  // 當點擊文字框時觸發API請求
+  AREANumberInput.addEventListener('focus', async () => {
+    if (areaData.length === 0) {
+      try {
+        const username = '{{ USER }}';  // 從Django模板獲取用戶名
+        const response = await fetch(`/api/area-list/?year=latest&user=${username}&labeltype=area`);
+        const jsonResponse = await response.json();
+        if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+          areaData = jsonResponse.data;
+          // console.log('處理後的 busData：', busData);
+          showSuggestions(AREANumberInput.value);
+        }
+      } catch (error) {
+        console.error('Error fetching area list:', error);
+      }
+    } else {
+      showSuggestions(AREANumberInput.value);
+    }
+  });
+  
+  // 監聽輸入變化
+  AREANumberInput.addEventListener('input', () => {
+    showSuggestions(AREANumberInput.value);
+  });
+  
+  // 點擊文件其他地方時關閉下拉選單
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-container')) {
+      autocompleteDropdown.style.display = 'none';
+    }
+  });
+  
+  // 顯示建議選項
+  function showSuggestions(inputValue) {
+    const filteredData = areaData.filter(area => {
+      const areaNumber = area.num.toString();  // 修改這裡來匹配你的API格式
+      return areaNumber.includes(inputValue);
+    });
+  
+    if (filteredData.length > 0) {
+      autocompleteDropdown.innerHTML = filteredData
+        .map(area => `
+          <div class="suggestion-item" onclick="selectArea('${area.num}', '${area.name.trim()}')">  
+            ${area.num} - ${area.name.trim()}
+          </div>
+        `)
+        .join('');
+      autocompleteDropdown.style.display = 'block';
+    } else {
+      autocompleteDropdown.style.display = 'none';
+    }
+  }
+  
+  // 選擇建議選項
+  function selectArea(AREANumber, AREAName) {
+    AREANumberInput.value = AREANumber;
+    // 如果需要，也可以自動填充bus name欄位
+    const AREANameInput = document.querySelector('input[name="AREAName"]');
+    if (AREANameInput) {
+      AREANameInput.value = AREAName;
+    }
+    autocompleteDropdown.style.display = 'none';
+  }
+  </script>    
+{% endblock %}

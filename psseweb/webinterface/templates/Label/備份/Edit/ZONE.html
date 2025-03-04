@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <section class="inner-page">
+
+    <div class="container">
+      <form method="GET" action= {% url 'modelfy_data_of_which_Label' 'ZONE' %}> 
+        
+        <br></br>
+        <div style="text-align: center; font-size:14pt;">
+          
+          <div>
+            {% for year in years %}
+              <input type="checkbox" id="{{ year }}" name="year" value="{{ year }}">
+              <label for="{{ year }}">{{ year }}</label>
+            {% endfor %}
+          </div>
+        
+        </div>
+        <br></br>
+        <input  type="submit" style='font-size:12pt;' class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="write" value="確定修改">
+        
+        <!-- <p class="mb-4">ZONE Table </p> -->
+        <br></br> 
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" style="font-size:10pt;">ZONE Data of {{ USER }}</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive" style="font-size:10pt; height: 50px; overflow-y: scroll;" >
+              
+                
+              <table>
+                  
+                <!-- <tr>
+                  <td>username</td>
+                  <td><input type="text" name="username"></td>
+                </tr> -->
+                <tr>
+                  <td>ZONE Number</td> 
+                  <td><input type="number" name="ZONENumber"></td>
+                </tr>
+                <tr>
+                  <td>ZONE Name</td>
+                  <td><input type="text" name="ZONEName"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          
+        </div> 
+      </form>
+      <p>
+
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+              <tr>
+                  
+                <th>id</th>
+                <th>username</th>
+                <th>ZONE Number</th>
+                <th>ZONE Name</th>
+              </tr>
+          </thead>
+          <tfoot>
+              <tr>
+                  
+                  <th>id</th>
+                  <th>username</th>
+                  <th>ZONE Number</th>
+                  <th>ZONE Name</th>
+              </tr>
+          </tfoot>
+          
+          <tbody>
+              {% for row in databasecolumn %}
+              <tr>                                         
+                  <td>{{ row.id }}</td>
+                  <td contenteditable='false'>{{ row.user_name }}</td>
+                  <td contenteditable='false'>{{ row.ZONE_Num }}</td>
+                  <td contenteditable='false'>{{ row.ZONE_Name }}</td>
+                      
+              </tr>
+              {% endfor %}
+          </tbody>
+          
+        </table>    
+         
+      </p>
+    </div>
+    <form method="GET" action= {% url 'delete' 'ZONE' %}>
+      <input  type="submit" class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="delete" value="刪除Zone所有資料">  
+
+    </form>  
+  </section>
+{% endblock %}

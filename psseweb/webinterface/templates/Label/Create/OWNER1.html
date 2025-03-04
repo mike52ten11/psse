@@ -1,0 +1,325 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Psse</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="{% static "assets/img/favicon.png" %}" rel="icon">
+    <link href="{% static "assets/img/apple-touch-icon.png" %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static "assets/vendor/aos/aos.css" %}" rel="stylesheet">
+    <link href="{% static "assets/vendor/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "assets/vendor/bootstrap-icons/bootstrap-icons.css" %}" rel="stylesheet">
+    <link href="{% static "assets/vendor/boxicons/css/boxicons.min.css" %}" rel="stylesheet">
+    <link href="{% static "assets/vendor/glightbox/css/glightbox.min.css" %}" rel="stylesheet">
+    <link href="{% static "assets/vendor/remixicon/remixicon.css" %}" rel="stylesheet">
+    <link href="{% static "assets/vendor/swiper/swiper-bundle.min.css" %}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{% static "assets/css/style.css" %}" rel="stylesheet">
+
+    <!-- =======================================================
+    * Template Name: OnePage
+    * Updated: Sep 18 2023 with Bootstrap v5.3.2
+    * Template URL: https://bootstrapmade.com/onepage-multipurpose-bootstrap-template/
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->    
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="thumbnail" content="https://i2.bahamut.com.tw/anime/FB_anime.png">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="website">
+    <!-- <meta property="og:url" content="https://ani.gamer.com.tw"> -->
+    <meta property="og:image" content="https://i2.bahamut.com.tw/anime/FB_anime.png">
+    <meta property="og:description" content="">
+    <meta name="apple-itunes-app" content="app-id=1102650114">
+    <!-- <link rel='icon' href='https://i2.bahamut.com.tw/favicon.svg?v=1689129528' type='image/svg+xml'> -->
+    <!-- <link rel="apple-touch-icon" href="https://ani.gamer.com.tw/apple-touch-icon-114.jpg" /> -->
+    <!-- <link rel="apple-touch-icon" sizes="72x72" href="https://ani.gamer.com.tw/apple-touch-icon-72.jpg" /> -->
+    <!-- <link rel="apple-touch-icon" sizes="144x144" href="https://ani.gamer.com.tw/apple-touch-icon-144.jpg" /> -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400&display=swap" rel="stylesheet">
+    <link href='https://i2.bahamut.com.tw/css/acg_new.css?v=1690258492' rel='stylesheet' type='text/css'>
+    <link href='https://i2.bahamut.com.tw/css/anime.css?v=1699590650' rel='stylesheet' type='text/css'>
+    <link href="https://i2.bahamut.com.tw/css/plugins/toastr.min.css" rel='stylesheet' type='text/css'>
+    <link href="https://i2.bahamut.com.tw/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="https://i2.bahamut.com.tw/css/plugins/slick.css?v=1610514513" rel="stylesheet" type="text/css">
+
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    
+
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/BAHA_EGG.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/plugins/js.cookie-2.1.4.js"></script>
+    <script>window.lazySizesConfig = window.lazySizesConfig || {};lazySizesConfig.init = false;</script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/plugins/lazysizes-3.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
+    <!-- <script>window.dialogifyConfig = {dialog: {className: 'anime_dialogify'}}</script> -->
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/plugins/dialogify.min.js?v=1692157609"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/plugins/toastr-2.1.3.min.js"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/user_login.js?v=1685524172"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/sys.js?v=1602574456"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/BH_topBar_ani.js?v=1695612158"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/jquery.keyframes.min.js"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/anime.js?v=1699517131"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/util.js?v=1698726074"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/csrf.js?v=1689666161"></script>
+    <script type='text/javascript' src='https://i2.bahamut.com.tw/js/animeIndex.js?v=1681786066'></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/ad.js?v=1602819564"></script>
+
+
+
+
+
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/JS/ad/animeLogo.js?v=2023111122"></script>
+    <script type="text/javascript" src="https://i2.bahamut.com.tw/js/plugins/slick-1.6.0.min.js"></script>    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Data Show</title>    
+      <style>
+          .chosen {
+          font-weight: bold;
+          color: #ffffff;
+          background-image: url(../imgGlobal/bulletRight.jpg);
+          background-repeat: no-repeat;
+          display: block;
+          padding-left: -12px;
+          background-position: 168px;
+          }        
+          table {
+            border-collapse: collapse;
+            width: 100%;
+          }
+      
+          th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+          }
+      
+          th {
+            background-color: #f2f2f2;
+          }
+      
+          .edit-btn, .delete-btn {
+            cursor: pointer;
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+          }
+      
+          .save-btn, .cancel-btn {
+            display: none;
+          }
+      </style>
+
+  </head>
+  <body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top">
+      <div class="container d-flex align-items-center justify-content-between">
+
+        <h1 class="logo"><a href="{% url 'home' %}">TPRI</a></h1>
+        <!-- Uncomment below if you prefer to use an image logo -->
+        <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+        <nav id="navbar" class="navbar">
+          <ul>
+            <li><a class="nav-link scrollto " href="{% url 'home' %}">首頁</a></li>
+            <li><a class="nav-link scrollto" href="{% url 'upload_page' %}">上傳sav檔</a></li>
+            <li><a class="nav-link scrollto o" href="{% url 'pssefunction' %}">電力潮流、故障電流</a></li>
+            <li class="dropdown"><a href="{% url 'download_page' %}"><span>下載專區</span> <i class="bi bi-chevron-down"></i></a>
+              <ul>
+                
+                <li><a href="{% url 'download_powerflow_page' %}">進入下載電力潮流檔案頁面</a></li>
+                <li><a href="{% url 'download_errorcircuit_page' %}">進入下載故障電流檔案頁面</a></li> 
+                
+              </ul>
+            </li>            
+            <li class="dropdown"><a href="#"><span>表格資料新增、修改</span> <i class="bi bi-chevron-down"></i></a>
+              <ul>
+                
+                <li><a href="{% url 'select_Label' 'AREA' %}">AREA</a></li>
+                <li><a href="{% url 'select_Label' 'BRANCH' %}">BRANCH</a></li>
+                <li><a href="{% url 'select_Label' 'BUS' %}">BUS</a></li>
+                <li><a href="{% url 'select_Label' 'FIXEDSHUNT' %}">FIXEDSHUNT</a></li>
+                <li><a href="{% url 'select_Label' 'GENERATOR' %}">GENERATOR</a></li>
+                <li><a href="{% url 'select_Label' 'LOAD' %}">LOAD</a></li>
+                <li><a href="{% url 'select_Label' 'Machine' %}">Machine</a></li>  
+  
+                <li><a href="{% url 'select_Label' 'OWNER' %}">OWNER</a></li>  
+                <li><a href="{% url 'select_Label' 'Plant' %}">Plant</a></li>             
+                <li><a href="{% url 'select_Label' 'TRANSFORMER2Winding' %}">TRANSFORMER2Winding</a></li>
+                <li><a href="{% url 'select_Label' 'TRANSFORMER3Winding' %}">TRANSFORMER3Winding</a></li>
+                <li><a href="{% url 'select_Label' 'ZONE' %}">ZONE</a></li>    
+                
+              </ul>
+            <li class="dropdown"><a href="#"><span>歡迎 {{ request.user }}</span> <i class="bi bi-chevron-down"></i></a>
+              <ul>
+                <li><a href="{% url 'logout' %}">登出</a></li>
+              </ul>
+            </li>
+
+          </ul>
+          <!-- <i class="bi bi-list mobile-nav-toggle"></i> -->
+        </nav><!-- .navbar -->
+
+      </div>
+    </header><!-- End Header -->  
+
+    <form method="GET" action= {% url 'write_to_raw' 'OWNER' %}>  
+      <div id="wrapper">
+
+        
+          <!-- Content Wrapper -->
+          <div id="content-wrapper" class="d-flex flex-column">
+
+              <!-- Main Content -->
+              <div id="content">                      
+
+                  <!-- Begin Page Content -->
+                  <div class="container-fluid">
+                    <br></br><br></br><br></br><br></br>
+                      <div style="text-align: center; font-size:14pt;">
+                        
+                        <div>
+                          {% for year in years %}
+                          <input type="checkbox" id="{{ year }}" name="year" value="{{ year }}">
+                          <label for="{{ year }}">{{ year }}</label>
+                          {% endfor %}
+                        </div>
+                      
+                      </div>
+                      <br></br>
+                      <input  type="submit" class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="write" value="確定寫入">
+                      
+                      <!-- <p class="mb-4">ZONE Table </p> -->
+                      <br></br> 
+                      <!-- DataTales Example -->
+                      <div class="card shadow mb-4">
+                          <div class="card-header py-3">
+                              <h6 class="m-0 font-weight-bold text-primary" style="font-size:10pt;">OWNER Data of {{ USER }}</h6>
+                          </div>
+                          
+                            
+                            <div class="card-body">
+                              <div class="table-responsive" style="font-size:10pt; height: 50px; overflow-y: scroll;" >
+                                
+                                  
+                                  <table>
+                                    
+                                    <!-- <tr>
+                                      <td>username</td>
+                                      <td><input type="text" name="username"></td>
+                                    </tr> -->
+                                    <tr>
+                                      <td>Owner Number</td> 
+                                      <td><input type="number" name="OWNERNumber"></td>
+                                    </tr>
+                                    <tr>
+                                      <td>Owner Name</td>
+                                      <td><input type="text" name="OWNERName"></td>
+                                    </tr>
+                                  </table>
+                                  
+    
+                              </div>
+                            </div>
+                          
+                      </div>
+
+                  </div>
+                  <!-- /.container-fluid -->
+
+              </div>
+              <!-- End of Main Content -->
+
+              <!-- Footer -->
+              <footer class="sticky-footer bg-white">
+                  <div class="container my-auto">
+                      <div class="copyright text-center my-auto">
+                          <span>Copyright &copy; TPRI 2023</span>
+                      </div>
+                  </div>
+              </footer>
+              <!-- End of Footer -->
+
+            </div>
+          <!-- End of Content Wrapper -->
+
+      </div>    
+    </form>
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+      <thead>
+          <tr>
+              
+              <th>id</th>
+              <th>username</th>
+              <th>OWNER Number</th>
+              <th>OWNER Name</th>
+          </tr>
+      </thead>
+      <tfoot>
+          <tr>
+              
+              <th>id</th>
+              <th>username</th>
+              <th>OWNER Number</th>
+              <th>OWNER Name</th>
+          </tr>
+      </tfoot>
+      
+      <tbody>
+          {% for row in databasecolumn %}
+          <tr>                                         
+              <td>{{ row.id }}</td>
+              <td contenteditable='false'>{{ row.user_name }}</td>
+              <td contenteditable='false'>{{ row.OWNER_Num }}</td>
+              <td contenteditable='false'>{{ row.OWNER_Name }}</td>
+                  
+          </tr>
+          {% endfor %}
+      </tbody>
+      
+    </table>    
+    <form method="GET" action= {% url 'delete' 'ZONE' %}>
+      <input  type="submit" class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="delete" value="刪除Zone所有資料">  
+
+    </form>
+    
+      <a class="scroll-to-top rounded" href="#page-top">
+          <i class="fas fa-angle-up"></i>
+      </a>
+      {% if messages %}
+        {% for msg in messages %}
+        <script>
+            alert('{{ msg }}'); 
+        </script>
+        {% endfor %}
+      {% endif %}    
+  </body>
+
+</html>

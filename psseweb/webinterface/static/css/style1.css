@@ -1,0 +1,64 @@
+html,
+body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.textcenter {
+
+  margin: auto;
+  
+  text-align: center;
+}
+.flex-nav {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap:nowrap;
+  margin: auto;
+}
+
+.input-nav {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap:nowrap;
+  margin: auto;
+
+}
+#submit_style {
+  text-align: center;
+  display: flex;  
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+#main_style {
+  text-align: center;
+  display: flex;  
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  color: #000000;
+}
+
+#select_style {
+  width: 20%;
+  text-align: center;
+  display: flex;  
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  
+}
+#my_label_style {
+  /* padding: 20px;
+  background-color: #e7e7e7; 
+  color: black;  */
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+  margin: 0.5rem;
+}

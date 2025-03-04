@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="inner-page">
+    <div class="container d-flex flex-column align-items-center">
+      <p>
+          <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;" method="POST" name="errorcircuit_buttom" action={% url "errorcircuit" %}>
+              {% csrf_token %}
+              <div style="text-align: center; font-size:14pt;">
+                <p>選擇檔案</p>      
+                <div>
+                  {% for year in years %}
+                    <input type="checkbox" id="{{ year }}" name="year" value="{{ year }}">
+                    <label for="{{ year }}">{{ year }}</label>
+                  {% endfor %}
+                </div>
+                <p>輸入Base KV</p> 
+                  <tr>
+                    <td>minimum basekV limit </td> 
+                    <td><input type="number" name="minbasekv" style="width: 100px; margin-right: 50px;"></td>
+                  </tr>
+                  <tr>
+                    <td>maximum basekV limit </td> 
+                    <td><input type="number" name="maxbasekv" style="width: 100px; "></td>
+                  </tr>
+                                  
+                <br></br>
+                <p>選area</p>
+                {% for area in areas %}
+                  <input type="checkbox" id="{{ area.num }}" name="checkbox_area" value="{{ area.num }}">
+                  <label for="{{ area.num }}">{{ area.name }}</label>
+                {% endfor %}                
+                <!-- <input type="checkbox" id="1" name="checkbox_area" value="1">
+                <label for="1">北部</label>
+                <input type="checkbox" id="2" name="checkbox_area" value="2">
+                <label for="2">中部</label>
+                <input type="checkbox" id="3" name="checkbox_area" value="3">
+                <label for="3">南部</label>
+                <input type="checkbox" id="4" name="checkbox_area" value="4">
+                <label for="4">東部</label>                                                 -->
+              </div>
+              <br></br>
+              <p>選擇要跑的owner</p>
+              <div style="text-align: center; font-size:14pt;">
+                      
+                <div>
+                  {% for owner in owners %}
+                    <input type="checkbox" id="{{ owner.num }}" name="chekbox_Owner" value="{{ owner.num }}">
+                    <label for="{{ owner.num }}">{{ owner.num }} {{ owner.name }}</label>
+                  {% endfor %}
+                </div>
+              
+              </div>           
+              <br></br>              
+              <p>選擇要跑的zone</p>
+              <div style="text-align: center; font-size:14pt;">
+                      
+                <div>
+                  {% for zone in zones %}
+                    <input type="checkbox" id="{{ zone.num }}" name="chekbox_Zone" value="{{ zone.num }}">
+                    <label for="{{ zone.num }}">{{ zone.num }} {{ zone.name }}</label>
+                  {% endfor %}
+                </div>
+              
+              </div>              
+              <br></br> 
+                               
+              <input type="submit" name="errorcircuit" id="submit_style" value="執行故障電流"/>
+              
+          </form>
+          <br></br> 
+          <p>故障電流結果</p>   
+          <div id="errorcircuit-result" style="padding: 10px;text-align: center;margin: auto;font-size:12pt;" style="color: black;padding: 32px;text-align: center;">    
+
+          </div>         
+
+
+      </p>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const executionResultDiv = document.getElementById('errorcircuit-result');
+
+        function fetchExecutionStatus() {
+            fetch("{% url 'errorcircuit_status' %}", {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 根據不同狀態顯示不同的訊息和樣式
+                switch(data.status) {
+                  case 'wait':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-info" d-flex align-items-center justify-content-center">
+                                <div class=" text-primary mr-2" role="status">
+                                    <span class="sr-only">載入中...</span>
+                                </div>
+                                ${data.message}
+                            </div>
+                        `;
+                        // 繼續輪詢
+                        // setTimeout(fetchExecutionStatus, 5000);
+                        break;
+
+                    case 'processing':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-info" d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary mr-2" role="status">
+                                    <span class="sr-only">載入中...</span>
+                                </div>
+                                ${data.message}
+                            </div>
+                        `;
+                        // 繼續輪詢
+                        setTimeout(fetchExecutionStatus, 5000);
+                        break;
+
+                    case 'success':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-success" d-flex align-items-center justify-content-center">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                        break;
+
+                    case 'error':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-danger" d-flex align-items-center justify-content-center">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                        break;
+
+                    default:
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-warning">
+                                未知狀態
+                            </div>
+                        `;
+                }
+            })
+            .catch(error => {
+                executionResultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        發生錯誤: ${error.message}
+                    </div>
+                `;
+            });
+        }
+
+        // 立即開始獲取狀態
+        fetchExecutionStatus();
+    });
+  </script>  
+{% endblock %}

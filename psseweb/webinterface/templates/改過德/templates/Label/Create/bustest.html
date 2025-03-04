@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="section inner-page">
+    <section class="section inner-page">
+        <div class="container">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size:10pt;">
+                    Bus Data of {{ USER }}
+                </h6>
+            </div>
+            <div class="row justify-content-center mb-4">
+              <div class="col-md-6">
+                  <div class="form-group mb-3">
+                      <label for="dynamic_bus_fault">選bus fault</label>
+                      <select class="form-control" id="dynamic_bus_fault" onchange="fetchBusData()" name="dynamic_bus_fault">
+                          <!-- 添加選項 -->
+                      </select>
+                  </div>
+              </div>
+          </div>
+
+
+            <style>
+                .search-container {
+                    position: relative;
+                    max-width: 300px;
+                    margin: 20px auto;
+                    font-family: Arial, sans-serif;
+                }
+
+                .search-input {
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    box-sizing: border-box;
+                }
+
+                .dropdown {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    max-height: 200px;
+                    overflow-y: auto;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    display: none;
+                    z-index: 1000;
+                }
+
+                .dropdown.show {
+                    display: block;
+                }
+
+                .dropdown-item {
+                    padding: 10px;
+                    cursor: pointer;
+                }
+
+                .dropdown-item:hover {
+                    background-color: #f5f5f5;
+                }
+
+                .loading {
+                    text-align: center;
+                    padding: 10px;
+                    color: #666;
+                }
+
+                .bus-number {
+                    font-weight: bold;
+                    margin-right: 5px;
+                }
+
+                .bus-name {
+                    color: #666;
+                }
+            </style>
+
+            <script>
+                let busData = null;
+                const searchInput = document.querySelector('.search-input');
+                const dropdown = document.querySelector('.dropdown');
+                let isFirstClick = true;
+
+                // 獲取 CSRF Token
+                function getCSRFToken() {
+                    const cookies = document.cookie.split(';');
+                    for (let cookie of cookies) {
+                        const [name, value] = cookie.trim().split('=');
+                        if (name === 'csrftoken') {
+                            return value;
+                        }
+                    }
+                    return '';
+                }
+
+                // API 請求函數
+                async function fetchBusData() {
+                    const params = new URLSearchParams({
+                        user: '{{ USER }}',
+                        labeltype: 'bus',
+                    });
+
+                    try {
+                        const response = await fetch(`/api/bus-list/?${params}`, {
+                            method: 'GET',
+                            headers: {
+                                'X-CSRFToken': getCSRFToken(),
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+
+                        return await response.json();
+                    } catch (error) {
+                        console.error('Error:', error);
+                        throw error;
+                    }
+                }
+
+                // 監聽輸入框點擊事件
+                searchInput.addEventListener('click', async function() {
+                    if (isFirstClick && !busData) {
+                        isFirstClick = false;
+                        dropdown.innerHTML = '<div class="loading">Loading...</div>';
+                        dropdown.classList.add('show');
+                        
+                        try {
+                            busData = await fetchBusData();
+                            filterAndDisplay(searchInput.value);
+                        } catch (error) {
+                            dropdown.innerHTML = '<div class="loading">Error loading bus data</div>';
+                        }
+                    } else {
+                        dropdown.classList.add('show');
+                        filterAndDisplay(searchInput.value);
+                    }
+                });
+
+                // 監聽輸入事件
+                searchInput.addEventListener('input', function() {
+                    if (busData) {
+                        filterAndDisplay(this.value);
+                    }
+                });
+
+                // 監聽點擊事件以關閉下拉選單
+                document.addEventListener('click', function(e) {
+                    if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+
+                // 過濾並顯示結果
+                function filterAndDisplay(searchText) {
+                    if (!busData) return;
+
+                    const filtered = searchText
+                        ? busData.filter(bus => 
+                            bus.num.toString().includes(searchText) || 
+                            bus.name.trim().toLowerCase().includes(searchText.toLowerCase()))
+                        : busData;
+
+                    if (filtered.length === 0) {
+                        dropdown.innerHTML = '<div class="dropdown-item">No results found</div>';
+                        return;
+                    }
+
+                    dropdown.innerHTML = filtered
+                        .map(bus => `
+                            <div class="dropdown-item" data-num="${bus.num}">
+                                <span class="bus-number">${bus.num}</span>
+                                <span class="bus-name">- ${bus.name.trim()}</span>
+                            </div>
+                        `)
+                        .join('');
+
+                    // 為每個選項添加點擊事件
+                    document.querySelectorAll('.dropdown-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            const busNum = this.dataset.num;
+                            searchInput.value = busNum;
+                            dropdown.classList.remove('show');
+                        });
+                    });
+                }
+            </script>
+        </div>
+    </section>
+</section>
+
+{% endblock %}
