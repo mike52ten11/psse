@@ -1,0 +1,429 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web PSSE</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Raleway:300,400,500,600,700|Poppins:300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS - 只保留一個版本 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    
+    <style>
+        /* 基本樣式 */
+        .nav-link:hover {
+            color: #5777ba !important;
+        }
+        
+        /* 表格樣式 */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        .edit-btn, .delete-btn {
+            cursor: pointer;
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        /* 頂端導覽列樣式 */
+        #header {
+            background-color: white;
+            box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 100%;
+        }
+        
+        /* 響應式調整 - 增強漢堡選單功能 */
+        @media (max-width: 992px) {
+            .navbar-nav {
+                padding-top: 15px;
+            }
+            
+            .navbar-collapse {
+                background-color: white;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                position: absolute;
+                top: 56px;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                max-height: 80vh;
+                overflow-y: auto;
+                margin-left: 5px;
+                margin-right: 5px;
+            }
+            
+            .dropdown-menu {
+                border: none;
+                padding-left: 15px;
+                background-color: transparent;
+                position: static !important;
+                transform: none !important;
+                box-shadow: none;
+                display: none;
+            }
+            
+            .dropdown-menu.show {
+                display: block;
+            }
+            
+            .dropdown-item {
+                padding: 8px 15px;
+            }
+            
+            .navbar-nav .dropdown-menu {
+                float: none;
+            }
+            
+            .dropdown-toggle::after {
+                float: right;
+                margin-top: 10px;
+            }
+            
+            /* 確保頂部固定導航條在小屏幕上正確顯示 */
+            #header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                padding: 10px 0;
+            }
+            
+            /* 麵包屑導航在小屏幕上的顯示 */
+            .breadcrumbs .dropdown-menu {
+                left: auto;
+                right: 0;
+            }
+        }
+        
+        /* 內容區域 */
+        #main {
+            margin-top: 70px;
+            min-height: calc(100vh - 180px);
+        }
+        
+        /* 頁腳 */
+        footer {
+            padding: 20px 0;
+            background-color: #f8f9fa;
+        }
+        
+        /* 返回頂部按鈕 */
+        .back-to-top {
+            position: fixed;
+            right: 15px;
+            bottom: 15px;
+            z-index: 99;
+            background: #5777ba;
+            width: 40px;
+            height: 40px;
+            border-radius: 50px;
+            transition: all 0.4s;
+            display: none;
+        }
+
+        .back-to-top i {
+            font-size: 24px;
+            color: #fff;
+            line-height: 0;
+        }
+
+        .back-to-top:hover {
+            background: #748ec6;
+        }
+
+        .back-to-top.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 麵包屑導航樣式修正 */
+        .breadcrumbs {
+            padding: 15px 0;
+            background-color: #f8f9fa;
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumbs .dropdown-menu {
+            left: auto;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 頂端導覽列 -->
+    {% block sidebar %}
+    <header id="header" class="fixed-top">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="{% url 'home' %}">Web PSSE</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse show" id="navbarNav">
+                    <ul class="navbar-nav me-auto ">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">首頁</a>
+                        </li>
+                        
+                        <li class="nav-item dropdown-menu">
+                            <a class="nav-link dropdown-toggle" href="#" id="powerflowDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                電力潮流
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="powerflowDropdown">
+                                <li><a class="dropdown-item" href="{% url 'upload_page_of_upload_powerflow' %}">上傳sav檔</a></li>
+                                <li><a class="dropdown-item" href="{% url 'download_powerflow_page' %}">下載電力潮流檔案</a></li>
+                                <li><a class="dropdown-item" href="{% url 'powerflow_page' %}">跑電力潮流</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="dynamicDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                暫態
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dynamicDropdown">
+                                <li><a class="dropdown-item" href="{% url 'upload_page_of_upload_powerflow' %}">上傳sav檔</a></li>
+                                <li><a class="dropdown-item" href="{% url 'download_dynamic_page' %}">下載暫態檔案</a></li>
+                                <li><a class="dropdown-item" href="{% url 'dynamic_page' %}">跑暫態</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="errorCircuitDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                故障電流
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="errorCircuitDropdown">
+                                <li><a class="dropdown-item" href="{% url 'upload_page_of_upload_errorcircuit' %}">上傳sav檔</a></li>
+                                <li><a class="dropdown-item" href="{% url 'download_errorcircuit_page' %}">下載故障電流檔案</a></li>
+                                <li><a class="dropdown-item" href="{% url 'errorcircuit_page' %}">跑故障電流</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="tableDataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                表格資料新增/修改
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="tableDataDropdown">
+                                <li><a class="dropdown-item" href="{% url 'upload_page' %}">上傳sav檔</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'AREA' %}">AREA</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'ZONE' %}">ZONE</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'OWNER' %}">OWNER</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'BUS' %}">BUS</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'Machine' %}">Machine</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'LOAD' %}">LOAD</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'BRANCH' %}">BRANCH</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'TRANSFORMER2Winding' %}">TRANSFORMER2Winding</a></li>
+                                <li><a class="dropdown-item" href="{% url 'select_Label' 'TRANSFORMER3Winding' %}">TRANSFORMER3Winding</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'prepare_writing_data_page' %}">預覽新增/修改的內容</a>
+                        </li>
+                    </ul>
+                    
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                歡迎 {{ request.user }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">登出</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    {% endblock %}
+
+    <!-- 中間內容區塊 -->
+    <main id="main">
+
+
+        <!-- 頁面主要內容 -->
+        {% block content %}
+        <section class="inner-page">
+            <div class="container">
+                <!-- 頁面特定內容在此處替換 -->
+                {% if messages %}
+                <div class="alert-container">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endblock %}
+    </main>
+
+    <!-- 底部版權聲明 -->
+    <footer id="footer">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <div class="copyright">
+                        &copy; Copyright <strong><span>TPRI</span></strong> 2025
+                    </div>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="credits">
+                        Designed by <a href="http://10.52.200.200/w/">TPRI</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回頂部按鈕 -->
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- JS Libraries - 精簡版只保留必要的 -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 增強的初始化功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回頂部按鈕功能
+            var backToTop = document.querySelector('.back-to-top');
+            if (backToTop) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 100) {
+                        backToTop.classList.add('active');
+                    } else {
+                        backToTop.classList.remove('active');
+                    }
+                });
+                
+                backToTop.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+            
+            // 確保所有下拉選單在Bootstrap 5中正確初始化
+            var dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+            var dropdownList = Array.from(dropdownElementList).map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+            
+            // 處理移動設備上的導航顯示
+            var navbarToggler = document.querySelector('.navbar-toggler');
+            var navbarCollapse = document.querySelector('.navbar-collapse');
+            
+            if (navbarToggler) {
+                navbarToggler.addEventListener('click', function() {
+                    if (navbarCollapse.classList.contains('show')) {
+                        navbarCollapse.classList.remove('show');
+                    } else {
+                        navbarCollapse.classList.add('show');
+                    }
+                });
+            }
+            
+            // 在移動設備上處理下拉選單的點擊
+            if (window.innerWidth < 992) {
+                var dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+                
+                dropdownToggles.forEach(function(toggle) {
+                    toggle.addEventListener('click', function(e) {
+                        if (window.innerWidth < 992) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            var parent = this.parentElement;
+                            var dropdownMenu = parent.querySelector('.dropdown-menu');
+                            
+                            // 關閉其他打開的下拉選單
+                            document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                                if (menu !== dropdownMenu) {
+                                    menu.classList.remove('show');
+                                }
+                            });
+                            
+                            // 切換當前下拉選單
+                            if (dropdownMenu) {
+                                dropdownMenu.classList.toggle('show');
+                            }
+                        }
+                    });
+                });
+                
+                // 點擊頁面其他部分關閉所有下拉選單
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.dropdown')) {
+                        document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                            menu.classList.remove('show');
+                        });
+                    }
+                });
+            }
+            
+            // 確保DataTables正確初始化（如果頁面有使用的話）
+            var dataTables = document.querySelectorAll('.dataTable');
+            if (dataTables.length > 0) {
+                dataTables.forEach(function(table) {
+                    $(table).DataTable({
+                        responsive: true,
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/zh-HANT.json'
+                        }
+                    });
+                });
+            }
+        });
+    </script>    
+    
+    <!-- 顯示訊息的JavaScript -->
+    {% if messages %}
+      {% for msg in messages %}
+      <script>
+          alert('{{ msg|linebreaks|escape }}'); 
+      </script>
+      {% endfor %}
+    {% endif %}
+</body>
+</html>

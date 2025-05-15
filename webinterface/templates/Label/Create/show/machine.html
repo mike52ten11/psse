@@ -1,0 +1,236 @@
+{% comment %} machine 表格與相關操作 {% endcomment %}
+<div class="card mb-4">
+  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">元件5: machine</h6>
+    <!-- <button type="button" class="btn btn-sm btn-primary" id="add-area-row">新增一列</button> -->
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="machine-table">
+        <thead>
+          <tr>
+            <th>操作</th>
+            <th>BUS Number</th>
+            <th>ID</th>
+            <th>Machine Control Mode</th>
+            <th>BASE</th>
+            <th>Pgen</th>
+            <th>Qgen</th>
+            <th>Qmax</th>
+            <th>Qmin</th>
+            <th>Pmax</th>
+            <th>Pmin</th>
+            <th>Mbase</th>
+            <th>R Source</th>
+            <th>X Source</th>
+            <th>R</th>
+            <th>Subtransient X</th>
+            <th>R-Negative</th>
+            <th>X-Negative</th>
+            <th>R-Zero</th>
+            <th>X-Zero</th>
+            <th>Transient X</th>
+            <th>Synchronous X</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if prepare_writing_data_machine %}
+            {% for item in prepare_writing_data_machine %}
+              <tr data-row="{{ item.row }}">
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-sm btn-danger delete-machine-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">刪除</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary save-machine-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">確定修改</span>
+                    </button>
+                  </div>
+                </td>
+                
+                <td><input type="text" name="bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.bus_number }}"></td>
+                <td><input type="text" name="id_{{ item.row }}" class="form-control w-auto" value="{{ item.id }}"></td>
+                <td><input type="text" name="machine_control_mode_{{ item.row }}" class="form-control w-auto" value="{{ item.machine_control_mode }}"></td>
+                <td><input type="text" name="base_{{ item.row }}" class="form-control w-auto" value="{{ item.base }}"></td>
+                <td><input type="text" name="pgen_{{ item.row }}" class="form-control w-auto" value="{{ item.pgen }}"></td>
+                <td><input type="text" name="qgen_{{ item.row }}" class="form-control w-auto" value="{{ item.qgen }}"></td>
+                <td><input type="text" name="qmax_{{ item.row }}" class="form-control w-auto" value="{{ item.qmax }}"></td>
+                <td><input type="text" name="qmin_{{ item.row }}" class="form-control w-auto" value="{{ item.qmin }}"></td>
+                <td><input type="text" name="pmax_{{ item.row }}" class="form-control w-auto" value="{{ item.pmax }}"></td>
+                <td><input type="text" name="pmin_{{ item.row }}" class="form-control w-auto" value="{{ item.pmin }}"></td>
+                <td><input type="text" name="mbase_{{ item.row }}" class="form-control w-auto" value="{{ item.mbase }}"></td>
+                <td><input type="text" name="r_source_{{ item.row }}" class="form-control w-auto" value="{{ item.r_source }}"></td>
+                <td><input type="text" name="x_source_{{ item.row }}" class="form-control w-auto" value="{{ item.x_source }}"></td>
+                <td><input type="text" name="r_{{ item.row }}" class="form-control w-auto" value="{{ item.r }}"></td>
+                <td><input type="text" name="subtransient_x_{{ item.row }}" class="form-control w-auto" value="{{ item.subtransient_x }}"></td>
+                <td><input type="text" name="r_negative_{{ item.row }}" class="form-control w-auto" value="{{ item.r_negative }}"></td>
+                <td><input type="text" name="x_negative_{{ item.row }}" class="form-control w-auto" value="{{ item.x_negative }}"></td>
+                <td><input type="text" name="r_zero_{{ item.row }}" class="form-control w-auto" value="{{ item.r_zero }}"></td>
+                <td><input type="text" name="x_zero_{{ item.row }}" class="form-control w-auto" value="{{ item.x_zero }}"></td>
+                <td><input type="text" name="transient_x_{{ item.row }}" class="form-control w-auto" value="{{ item.transient_x }}"></td>
+                <td><input type="text" name="synchronous_x_{{ item.row }}" class="form-control w-auto" value="{{ item.synchronous_x }}"></td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const executionResultDiv = document.getElementById('writedata-result');
+
+    // 為表格中的所有現有行添加事件監聽
+    document.querySelectorAll('#machine-table tbody tr').forEach(row => {
+      addEventListenersToRow(row);
+    });
+
+    // 添加事件監聽器到行中的按鈕
+    function addEventListenersToRow(row) {
+      // 刪除按鈕事件
+      const deleteBtn = row.querySelector('.delete-machine-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          if (confirm('確定要刪除這一列嗎？')) {
+            // 發送Ajax請求刪除
+            fetch(`/delete/machine/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                // 從DOM中移除該行
+                row.remove();
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }
+        });
+      }
+
+      // 確定修改按鈕事件
+      const saveBtn = row.querySelector('.save-machine-btn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          const busNumber = row.querySelector(`input[name="bus_number_${rowId}"]`).value;
+          const id = row.querySelector(`input[name="id_${rowId}"]`).value;
+          const machineControlMode = row.querySelector(`input[name="machine_control_mode_${rowId}"]`).value;
+          const base = row.querySelector(`input[name="base_${rowId}"]`).value;
+          const pgen = row.querySelector(`input[name="pgen_${rowId}"]`).value;
+          const qgen = row.querySelector(`input[name="qgen_${rowId}"]`).value;
+          const qmax = row.querySelector(`input[name="qmax_${rowId}"]`).value;
+          const qmin = row.querySelector(`input[name="qmin_${rowId}"]`).value;
+          const pmax = row.querySelector(`input[name="pmax_${rowId}"]`).value;
+          const pmin = row.querySelector(`input[name="pmin_${rowId}"]`).value;
+          const mbase = row.querySelector(`input[name="mbase_${rowId}"]`).value;
+          const rSource = row.querySelector(`input[name="r_source_${rowId}"]`).value;
+          const xSource = row.querySelector(`input[name="x_source_${rowId}"]`).value;
+          const r = row.querySelector(`input[name="r_${rowId}"]`).value;
+          const subtransientX = row.querySelector(`input[name="subtransient_x_${rowId}"]`).value;
+          const rNegative = row.querySelector(`input[name="r_negative_${rowId}"]`).value;
+          const xNegative = row.querySelector(`input[name="x_negative_${rowId}"]`).value;
+          const rZero = row.querySelector(`input[name="r_zero_${rowId}"]`).value;
+          const xZero = row.querySelector(`input[name="x_zero_${rowId}"]`).value;
+          const transientX = row.querySelector(`input[name="transient_x_${rowId}"]`).value;
+          const synchronousX = row.querySelector(`input[name="synchronous_x_${rowId}"]`).value;
+          
+
+          if (confirm('確定要修改這一列嗎？')){
+          // 發送Ajax請求修改資料
+            fetch(`/edit/machine/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                busNumber: busNumber,
+                id:id,
+                machineControlMode:machineControlMode,
+                base: base,
+                pgen: pgen,
+                qgen: qgen,
+                qmax: qmax,
+                qmin: qmin,
+                pmax: pmax,
+                pmin: pmin,
+                mbase: mbase,
+                rSource: rSource,
+                xSource: xSource,
+                r: r,
+                subtransientX: subtransientX,
+                rNegative: rNegative,
+                xNegative: xNegative,
+                rZero: rZero,
+                xZero: xZero,
+                transientX: transientX,
+                synchronousX: synchronousX
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }  
+        });
+      }
+    }
+  });
+</script>

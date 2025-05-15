@@ -1,0 +1,151 @@
+{% comment %} Owner 表格與相關操作 {% endcomment %}
+<div class="card mb-4">
+  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">元件3: owner</h6>
+    <!-- <button type="button" class="btn btn-sm btn-primary" id="add-area-row">新增一列</button> -->
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="owner-table">
+        <thead>
+          <tr>
+            <th width="10%">操作</th>
+            <th>owner_number</th>
+            <th>owner_name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if prepare_writing_data_owner %}
+            {% for item in prepare_writing_data_owner %}
+              <tr data-row="{{ item.row }}">
+                <td>
+                  <button type="button" class="btn btn-sm btn-danger delete-owner-btn" data-row="{{ item.row }}">刪除</button>
+                  <button type="button" class="btn btn-sm btn-primary save-owner-btn" data-row="{{ item.row }}">確定修改</button>
+                </td>
+                <td><input type="text" name="owner_number_{{ item.row }}" class="form-control" value="{{ item.owner_number }}"></td>
+                <td><input type="text" name="owner_name_{{ item.row }}" class="form-control" value="{{ item.owner_name }}"></td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const executionResultDiv = document.getElementById('writedata-result');
+
+    // 為表格中的所有現有行添加事件監聽
+    document.querySelectorAll('#owner-table tbody tr').forEach(row => {
+      addEventListenersToRow(row);
+    });
+
+    // 添加事件監聽器到行中的按鈕
+    function addEventListenersToRow(row) {
+      // 刪除按鈕事件
+      const deleteBtn = row.querySelector('.delete-owner-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          if (confirm('確定要刪除這一列嗎？')) {
+            // 發送Ajax請求刪除
+            fetch(`/delete/owner/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                // 從DOM中移除該行
+                row.remove();
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }
+        });
+      }
+
+      // 確定修改按鈕事件
+      const saveBtn = row.querySelector('.save-owner-btn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          const ownerNumber = row.querySelector(`input[name="owner_number_${rowId}"]`).value;
+          const ownerName = row.querySelector(`input[name="owner_name_${rowId}"]`).value;
+          if (confirm('確定要修改這一列嗎？')){
+          // 發送Ajax請求修改資料
+            fetch(`/edit/owner/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                owner_number: ownerNumber,
+                owner_name: ownerName
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }  
+        });
+      }
+    }
+  });
+</script>

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="inner-page">
+    <div class="container d-flex flex-column align-items-center">
+      <p>
+        <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;"  method="POST" action= {% url 'delete_sav_errorcircuit' %} enctype="multipart/form-data" class="textcenter">
+          {% csrf_token %}
+          
+                      
+            <div style="font-size:14pt;">
+              {% for year in years %}
+              <input type="checkbox" id="{{ year }}" name="year" value="{{ year }}">
+              <label for="{{ year }}">{{ year }}</label>
+              {% endfor %}
+              <!-- &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; -->
+              <button  style="font-size:12pt;" type="submit" name="delete_sav">刪除sav檔</button>
+            </div>    
+           
+                                      
+        </form>        
+
+        <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;"  method="POST" action= {% url 'upload_errorcircuit' %} enctype="multipart/form-data" class="textcenter">
+          {% csrf_token %}
+       
+          <input type="file" name="savfile">
+          <button type="submit" name="upload">上傳 sav檔</button>                                    
+        </form>            
+      </p>
+      <div id="execution-result" class="mt-3">
+        <!-- 動態狀態將顯示在這裡 -->
+      </div>      
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const executionResultDiv = document.getElementById('execution-result');
+
+        function fetchExecutionStatus() {
+            fetch("{% url 'upload_errorcircuit_status' %}", {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 根據不同狀態顯示不同的訊息和樣式
+                switch(data.status) {
+                  case 'wait':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-info" d-flex align-items-center justify-content-center">
+                                <div class=" text-primary mr-2" role="status">
+                                    <span class="sr-only">載入中...</span>
+                                </div>
+                                ${data.message}
+                            </div>
+                        `;
+                        // 繼續輪詢
+                        // setTimeout(fetchExecutionStatus, 5000);
+                        break;
+
+                    case 'processing':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-info" d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary mr-2" role="status">
+                                    <span class="sr-only">載入中...</span>
+                                </div>
+                                ${data.message}
+                            </div>
+                        `;
+                        // 繼續輪詢
+                        setTimeout(fetchExecutionStatus, 5000);
+                        break;
+
+                    case 'success':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-success" d-flex align-items-center justify-content-center">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                        break;
+
+                    case 'error':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-danger" d-flex align-items-center justify-content-center">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                        break;
+
+                    default:
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-warning">
+                                未知狀態
+                            </div>
+                        `;
+                }
+            })
+            .catch(error => {
+                executionResultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        發生錯誤: ${error.message}
+                    </div>
+                `;
+            });
+        }
+
+        // 立即開始獲取狀態
+        fetchExecutionStatus();
+    });
+</script>  
+{% endblock %}

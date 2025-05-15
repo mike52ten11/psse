@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .autocomplete-dropdown {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #f5f5f5;
+  }
+
+  .autocomplete-dropdown {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: white;
+    border: 1px solid #ddd;
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1050; /* 增加z-index確保顯示在最上層 */
+  }
+  
+  .suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #f5f5f5;
+  }
+
+  .autocomplete-container {
+    position: relative;
+  }
+
+  /* 確保輸入框容器也有較高的z-index */
+  .input-wrapper {
+    position: relative;
+    z-index: 1000;
+  }
+
+  /* 確保卡片不會限制下拉選單的顯示 */
+  .card {
+    overflow: visible !important;
+  }
+
+  .card-body {
+    overflow: visible !important;
+  }
+
+  /* 確保表格單元格不會遮擋下拉選單 */
+  table td {
+    position: relative;
+  }
+  .content-block {
+    width: 100%;         /* 寬度佔整個視口 */
+    height: 100%;        /* 高度佔整個視口 */
+    /* display: flex;        使用 Flexbox 居中 */
+    align-items: center;  /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    background-color: #f9f9f9; /* 設置背景顏色(視需要) */
+    padding: 10px;
+  }
+
+  </style>
+  <section class="inner-page">
+
+    <div class="container content-block">
+      <form method="GET" action= "{% url 'write_to_savfile_for_branch' %}"> 
+        
+        <br></br>
+        <div style='text-align:center;font-size:12pt;'><input  type="submit"  class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="write" value="確定新增"></div>
+        
+        
+        <!-- <p class="mb-4">ZONE Table </p> -->
+        <br></br> 
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" style="font-size:10pt;">Branch Data of {{ USER }}</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive" style="font-size:10pt;" >
+              
+                
+              <table>
+                <tr>
+                  <h4 class="text-center mb-4" style="color:red;">
+                    * 表示必填
+                  </h4>                    
+                  <td><sup class="required-mark">*</sup>From BUS Number</td> 
+                  <td>
+                    <div class="autocomplete-container" style="position: relative;">
+                      <input type="text" id="FromBusNumberInput" name="FromBusNumber" pattern="[0-9]+" required>
+                      <div id="autocompletefromDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- <tr>
+                  <td>From Bus Number</td> 
+                  <td><input type="number" name="FromBusNumber"></td>
+                </tr>                  -->
+                <tr>
+                  <td><sup class="required-mark">*</sup>To Bus Number</td>                  
+                  <td>
+                    <div class="autocomplete-container" style="position: relative;">
+                      <input type="text" id="ToBusNumberInput" name="ToBusNumber" pattern="[0-9]+" required>
+                      <div id="autocompleteToBusDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                      </div>
+                    </div>
+                  </td>                  
+                </tr>    
+                             
+                <tr>
+                  <td>&nbsp;&nbsp;ID</td>
+                  <td><input type="text" name="ID" value=1></td>
+                </tr>
+                <tr>
+                  <td>&nbsp;&nbsp;LineR</td>
+                  <td><input type="text" name="LineR"  value=0.0></td>
+                </tr>    
+
+                <tr>
+                  <td>&nbsp;&nbsp;LineX</td>
+                  <td><input type="text" name="LineX" value=0.0001></td>
+                </tr>  
+
+                <tr>
+                  <td>&nbsp;&nbsp;ChargingB</td>
+                  <td><input type="text" name="ChargingB" value=0.0></td>
+                </tr>  
+
+                <tr>
+                  <td>&nbsp;&nbsp;Length</td>
+                  <td><input type="text" name="Length" value=0.0></td>
+                </tr>  
+
+                <tr>
+                  <td>&nbsp;&nbsp;RATE1</td>
+                  <td><input type="text" name="RATE1"  value=0.0></td>
+                </tr> 
+
+                <tr>
+                  <td>&nbsp;&nbsp;NAME</td>
+                  <td><input type="text" name="NAME"  value=" "></td>
+                </tr>    
+
+                <tr>
+                  <td>&nbsp;&nbsp;R-Zero</td>
+                  <td><input type="text" name="R_Zero" value=0.0></td>
+                </tr>    
+                <tr>
+                  <td>&nbsp;&nbsp;X-Zero</td>
+                  <td><input type="text" name="X_Zero" value=0.0></td>
+                </tr>    
+                <tr>
+                  <td>&nbsp;&nbsp;B-Zero</td>
+                  <td><input type="text" name="B_Zero" value=0.0></td>
+                </tr>                                                    
+
+              </table>
+            </div>
+          </div>
+          
+        </div> 
+      </form>
+
+    </div>
+ 
+  </section>
+  <script>
+    //==========================================================================
+    //                          From Bus 的下拉選單
+    //==========================================================================
+
+    //define 從後台取得bus Data 的變數 
+    window.busData = window.busData || [];
+
+    //選取to bus number 的文字框 
+    const FromBusNumberInput = document.getElementById('FromBusNumberInput');
+
+    //定義to bus number 的下拉選單
+    const autocompletefromDropdown = document.getElementById('autocompletefromDropdown');
+    
+    // 當點擊to bus number 文字框時觸發API請求
+    FromBusNumberInput.addEventListener('focus', async () => {
+      if (busData.length === 0) {
+        try {
+          // 從Django模板獲取用戶名
+          const username = '{{ USER }}';  
+
+          // 打api 獲取bus data
+          const response = await fetch(`/api/branch-list-of-api/?year=latest&user=${username}&labeltype=branch&fom_to_last_bus=from`);
+          
+          // 使用json格式 獲取bus data(後臺回傳json格式)
+          const jsonResponse = await response.json();
+          if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+            busData = jsonResponse.data;
+
+            showSuggestions(FromBusNumberInput.value);
+          }
+        } catch (error) {
+          console.error('Error fetching bus list:', error);
+        }
+      } else {
+        showSuggestions(FromBusNumberInput.value);
+      }
+    });
+    
+    // 監聽 from bus data 文字框輸入變化
+    FromBusNumberInput.addEventListener('input', () => {
+      showSuggestions(FromBusNumberInput.value);
+    });
+
+    // 點擊文件其他地方時關閉下拉選單
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.autocomplete-container')) {
+        autocompletefromDropdown.style.display = 'none';
+      }
+    });
+    // 顯示建議選項
+    function showSuggestions(inputValue) {
+      //根據使用者輸入來尋找bus data
+        const filteredData = busData.filter(bus => {
+
+        const busNumber = bus.fromnum.toString();  // 修改這裡來匹配你的API格式
+        return busNumber.includes(inputValue);
+      });
+    
+      if (filteredData.length > 0) {
+        autocompletefromDropdown.innerHTML = filteredData
+          .map(bus => 
+          // `
+          //   <div class="suggestion-item" onclick="selectBus('${bus.fromnum}', '${bus.tonum}','${bus.circuit_id}')">  
+          //     ${bus.fromnum} - ${bus.fromname.trim()} - ${bus.tonum} - ${bus.toname.trim()} - ${bus.circuit_id}
+          //   </div>
+          // `
+          `
+            <div class="suggestion-item" onclick="selectBus('${bus.fromnum}', '${bus.tonum}', '${bus.id}')">  
+              From Bus: ${bus.fromnum} - ${bus.fromname.trim()} To Bus: ${bus.tonum} - ${bus.toname.trim()} ID: ${bus.id}
+            </div>
+          `          
+        )
+          .join('');
+          autocompletefromDropdown.style.display = 'block';
+      } else {
+        autocompletefromDropdown.style.display = 'none';
+      }
+    }
+    
+    // 選擇建議選項
+    function selectBus(fromnum, tonum, circuidid) {
+      
+      FromBusNumberInput.value = fromnum;
+      // 如果需要，也可以自動填充bus name欄位
+      const tonumInput = document.querySelector('input[name="ToBusNumber"]');
+      const circuididInput = document.querySelector('input[name="ID"]');
+      if (tonumInput) {
+        tonumInput.value = tonum;
+        circuididInput.value = circuidid;
+      }
+      autocompletefromDropdown.style.display = 'none';
+    }
+
+  //==========================================================================
+  //                          To Bus 的下拉選單
+  //==========================================================================
+  //define 從後台取得bus Data 的變數 
+  window.tobusData = window.tobusData || [];
+
+  //選取to bus number 的文字框  
+  const ToBusNumberInput = document.getElementById('ToBusNumberInput');
+
+  //定義to bus number 的下拉選單
+  const autocompleteToBusDropdown = document.getElementById('autocompleteToBusDropdown');
+
+  // 當點擊to bus number 文字框時觸發API請求
+  ToBusNumberInput.addEventListener('focus', async () => {
+    if (tobusData.length === 0) {
+      try {
+        // 從Django模板獲取用戶名
+        const username = '{{ USER }}';  
+
+        // 打api 獲取bus data
+        const response = await fetch(`/api/branch-list-of-api/?year=latest&user=${username}&labeltype=branch&fom_to_last_bus=to`);
+
+        // 使用json格式 獲取bus data(後臺回傳json格式)
+        const jsonResponse = await response.json();
+
+        if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+          tobusData = jsonResponse.data;
+
+          showtobusSuggestions(ToBusNumberInput.value);
+        }
+      } catch (error) {
+        console.error('Error fetching bus list:', error);
+      }
+    } else {
+      showtobusSuggestions(ToBusNumberInput.value);
+    }
+  });
+
+  // 監聽to bus number 文字框輸入變化
+  ToBusNumberInput.addEventListener('input', () => {
+    showtobusSuggestions(ToBusNumberInput.value);
+  });
+
+
+  // 點擊文件其他地方時關閉下拉選單
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-container')) {
+      autocompleteToBusDropdown.style.display = 'none';
+    }
+  });
+  // 顯示建議選項
+  function showtobusSuggestions(inputValue) {
+    //根據使用者輸入來尋找bus data
+      const filteredData = tobusData.filter(bus => {
+
+      const busNumber = bus.tonum.toString();  // 修改這裡來匹配你的API格式
+      return busNumber.includes(inputValue);
+    });
+
+    if (filteredData.length > 0) {
+      autocompleteToBusDropdown.innerHTML = filteredData
+        .map(bus => 
+        // `
+        //   <div class="suggestion-item" onclick="selectBus('${bus.fromnum}', '${bus.tonum}','${bus.circuit_id}')">  
+        //     ${bus.fromnum} - ${bus.fromname.trim()} - ${bus.tonum} - ${bus.toname.trim()} - ${bus.circuit_id}
+        //   </div>
+        // `
+        `
+          <div class="suggestion-item" onclick="selecttoBus('${bus.fromnum}', '${bus.tonum}','${bus.id}')">  
+            From Bus: ${bus.fromnum} - ${bus.fromname.trim()} To Bus: ${bus.tonum} - ${bus.toname.trim()} ID: ${bus.id}
+          </div>
+        `          
+      )
+        .join('');
+      autocompleteToBusDropdown.style.display = 'block';
+    } else {
+      autocompleteToBusDropdown.style.display = 'none';
+    }
+  }
+
+  // 填充建議選項到 to bus 文字框
+  function selecttoBus(fromnum, tonum, circuidid) {
+    ToBusNumberInput.value = tonum;
+    // 如果需要，也可以自動填充bus name欄位
+    const fromnumInput = document.querySelector('input[name="FromBusNumber"]');
+    const circuididInput = document.querySelector('input[name="ID"]');
+    if (fromnumInput) {
+      fromnumInput.value = fromnum;
+      circuididInput.value = circuidid;
+    }
+    autocompleteToBusDropdown.style.display = 'none';
+  }        
+    </script>      
+
+
+{% endblock %}
+
+

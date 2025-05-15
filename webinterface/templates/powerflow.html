@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="inner-page">
+ 
+    <div class="container d-flex flex-column align-items-center">
+        
+      <p>
+          <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;" method="POST" name="powerflow_buttom" action={% url "powerflow" %}>
+              {% csrf_token %}
+              <div style="text-align: center; font-size:14pt;">
+                <p>選擇檔案</p>      
+                <div>
+                  {% for year in years %}
+                  <input type="checkbox" id="{{ year }}" name="year" value="{{ year }}">
+                  <label for="{{ year }}">{{ year }}</label>
+                  {% endfor %}
+                </div>
+              
+              </div>
+<!--               
+              <div style="text-align: center; font-size:14pt;">
+                <p>輸入Base KV</p> 
+                  <tr>
+                    <td>minimum basekV limit </td> 
+                    <td><input type="number" name="minbasekv" style="width: 100px; margin-right: 50px;"></td>
+                  </tr>
+                  <tr>
+                    <td>maximum basekV limit </td> 
+                    <td><input type="number" name="maxbasekv" style="width: 100px; "></td>
+                  </tr>
+              </div> -->
+              
+              <br></br>
+              <!-- <div style="text-align: center; font-size:14pt;">
+                <p>輸入收斂閥值</p> 
+                  <tr>
+                    <td>收斂閥值 </td> 
+                    <td><input type="number" step="0.01" name="convergence_thread_hold" style="width: 100px; margin-right: 50px;"></td>
+                  </tr>
+              </div>   -->
+              <br></br>  
+              <!-- <p>選Area</p>            
+
+              <div style="text-align: center; font-size:14pt;">
+                      
+                <div>                  
+                  {% for area in areas %}
+                    <input type="checkbox" id="{{ area.num }}" name="checkbox_area" value="{{ area.num }}">
+                    <label for="{{ area.num }}">{{ area.name }}</label>
+                  {% endfor %}
+                </div>
+              
+              </div>               -->
+                                                
+                 
+              <div style="text-align: center; font-size:14pt;">
+                <p>選 case</p>      
+                <div>                  
+                  <input type="checkbox" id="N1_161KV" name="N1_161KV" value="N1_161KV">
+                  <label for="N1_161KV">161KV_N-1</label>
+                  <input type="checkbox" id="N1_345KV" name="N1_345KV" value="N1_345KV">
+                  <label for="N1_345KV">345KV_N-1</label>
+                  <input type="checkbox" id="N2_345KV" name="N2_345KV" value="N2_345KV">
+                  <label for="N2_345KV">345KV_N-2</label>
+                </div>  
+              
+              </div>                     
+              <br></br> 
+               
+              <!-- <select name="Zone">
+                {% for zone in zones %}
+
+                  <option value="{{ zone.Zonenum }}">{{ zone.Zonenum }} {{ zone.Zonename }}</option>
+                {% endfor %}
+
+              </select> -->
+              <div style="text-align: center; font-size:14pt;">
+                <p>選Area</p>       
+                <div>
+                  {% for area in areas %}
+                    <input type="checkbox" id="{{ area.num }}" name="chekbox_area" value="{{ area.num }}">
+                    <label for="{{ area.num }}">{{ area.name }}</label>
+                  {% endfor %}
+                </div>
+              
+              </div>
+
+              <div style="text-align: center; font-size:14pt;">
+                <p>選Zone</p>       
+                <div>
+                  {% for zone in zones %}
+                    <input type="checkbox" id="{{ zone.num }}" name="chekbox_Zone" value="{{ zone.num }}">
+                    <label for="{{ zone.num }}">{{ zone.num }} {{ zone.name }}</label>
+                  {% endfor %}
+                </div>
+              
+              </div>
+
+
+
+              <br></br>               
+              <input type="submit" name="powerflow" id="submit_style" value="執行電力潮流"/>
+              <!-- <br></br>
+              <input type="submit" name="powerflow_subline" id="submit_style" value="執行分岐"/> -->
+          </form>
+
+          <p>潮流資訊</p>
+          <div id="powerflow-result" style="padding: 10px;text-align: center;margin: auto;font-size:12pt;" style="color: black;padding: 32px;text-align: center;" class="mt-3">
+            <!-- 動態狀態將顯示在這裡 -->
+          </div>        
+          <!-- <div style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;" style="color: black;padding: 32px;text-align: center;">    
+              <label >
+                <p>潮流資訊</p>         
+                  {{ mismatch }}
+              </label>
+          </div>  -->
+          <p>分岐資訊</p>   
+          <div id="powerflowsub-result" style="padding: 10px;text-align: center;margin: auto;font-size:12pt;" style="color: black;padding: 32px;text-align: center;">    
+
+          </div>          
+
+      </p>
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const executionResultDiv = document.getElementById('powerflow-result');
+
+        function fetchExecutionStatus() {
+            fetch("{% url 'powerflow_status' %}", {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 根據不同狀態顯示不同的訊息和樣式
+                switch(data.status) {
+                  case 'wait':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-info" d-flex align-items-center justify-content-center">
+                                <div class=" text-primary mr-2" role="status">
+                                    <span class="sr-only">載入中...</span>
+                                </div>
+                                ${data.message}
+                            </div>
+                        `;
+                        // 繼續輪詢
+                        // setTimeout(fetchExecutionStatus, 5000);
+                        break;
+
+                    case 'processing':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-info" d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary mr-2" role="status">
+                                    <span class="sr-only">載入中...</span>
+                                </div>
+                                ${data.message}
+                            </div>
+                        `;
+                        // 繼續輪詢
+                        setTimeout(fetchExecutionStatus, 5000);
+                        break;
+
+                    case 'success':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-success" d-flex align-items-center justify-content-center">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                        break;
+
+                    case 'error':
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-danger" d-flex align-items-center justify-content-center">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                        break;
+
+                    default:
+                        executionResultDiv.innerHTML = `
+                            <div class="alert alert-warning">
+                                未知狀態
+                            </div>
+                        `;
+                }
+            })
+            .catch(error => {
+                executionResultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        發生錯誤: ${error.message}
+                    </div>
+                `;
+            });
+        }
+
+        // 立即開始獲取狀態
+        fetchExecutionStatus();
+    });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const executionResultDiv = document.getElementById('powerflowsub-result');
+
+      function fetchExecutionStatus() {
+          fetch("{% url 'powerflowsub_status' %}", {
+              method: 'GET',
+              headers: {
+                  'X-CSRFToken': csrfToken,
+                  'Content-Type': 'application/json'
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              // 根據不同狀態顯示不同的訊息和樣式
+              switch(data.status) {
+                case 'wait':
+                      executionResultDiv.innerHTML = `
+                          <div class="alert alert-info" d-flex align-items-center justify-content-center">
+                              <div class=" text-primary mr-2" role="status">
+                                  <span class="sr-only">載入中...</span>
+                              </div>
+                              ${data.message}
+                          </div>
+                      `;
+                      // 繼續輪詢
+                      // setTimeout(fetchExecutionStatus, 5000);
+                      break;
+
+                  case 'processing':
+                      executionResultDiv.innerHTML = `
+                          <div class="alert alert-info" d-flex align-items-center justify-content-center">
+                              <div class="spinner-border text-primary mr-2" role="status">
+                                  <span class="sr-only">載入中...</span>
+                              </div>
+                              ${data.message}
+                          </div>
+                      `;
+                      // 繼續輪詢
+                      setTimeout(fetchExecutionStatus, 5000);
+                      break;
+
+                  case 'success':
+                      executionResultDiv.innerHTML = `
+                          <div class="alert alert-success" d-flex align-items-center justify-content-center">
+                              <i class="fas fa-check-circle mr-2"></i>
+                              ${data.message}
+                          </div>
+                      `;
+                      break;
+
+                  case 'error':
+                      executionResultDiv.innerHTML = `
+                          <div class="alert alert-danger" d-flex align-items-center justify-content-center">
+                              <i class="fas fa-exclamation-triangle mr-2"></i>
+                              ${data.message}
+                          </div>
+                      `;
+                      break;
+
+                  default:
+                      executionResultDiv.innerHTML = `
+                          <div class="alert alert-warning">
+                              未知狀態
+                          </div>
+                      `;
+              }
+          })
+          .catch(error => {
+              executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                      <i class="fas fa-exclamation-triangle mr-2"></i>
+                      發生錯誤: ${error.message}
+                  </div>
+              `;
+          });
+      }
+
+      // 立即開始獲取狀態
+      fetchExecutionStatus();
+  });
+</script>
+{% endblock %}
+

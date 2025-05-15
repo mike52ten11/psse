@@ -1,0 +1,104 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>AutoPsse | Login page</title>
+
+        <!-- CSS FILES -->                
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,400;0,700;1,200&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+        
+        <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
+
+        <link href="{% static 'css/bootstrap-icons.css'%}" rel="stylesheet">
+
+        <link href="{% static 'css/tooplate-kool-form-pack.css'%}" rel="stylesheet">
+<!--
+
+Tooplate 2136 Kool Form Pack
+
+https://www.tooplate.com/view/2136-kool-form-pack
+
+Bootstrap 5 Form Pack Template
+
+-->
+    </head>
+    
+    <body>
+        <header class="site-header">
+            <main>
+                
+                <!-- Modal -->
+                <!-- class="hero-section d-flex justify-content-center align-items-center" -->
+                <section class="row justify-content-between hero-section  >
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="col-lg-5 col-12 mx-auto">
+                                <form action={% url 'forget_password' %} class="custom-form login-form" role="form" method="post">
+                                    {% csrf_token %}
+                                    <h2 class="hero-title text-center mb-4 pb-2"> forget password</h2>
+
+                                    <div class="form-floating mb-4 p-0">
+                                        
+                                        <input type="text" name="username" id="email" pattern="[0-9A-z]+" class="form-control" placeholder="姓名代號" required="">
+                                        <label for="username">姓名代號</label>
+                                    </div>
+                                    <div class="form-floating p-0">
+                                        <input type="password" name="password" id="password" pattern="[0-9A-z]+" class="form-control" placeholder="請輸入新密碼" required="">
+
+                                        <label for="password" >請輸入新密碼</label>
+                                    </div> 
+
+                                    <div class="row justify-content-center align-items-center">
+                                        <div class="col-lg-5 col-12">
+                                            <!-- <input  class="form-control" type="submit" value="登入" /> -->
+                                            <button type="submit" class="form-control">更改密碼</button>
+                                        </div>
+
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="video-wrap">
+                        <video autoplay="" loop="" muted="" class="custom-video" poster="">
+                            <source src="{% static 'videos/video.mp4'%}" type="video/mp4">
+
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <!-- <div class="video-wrap">
+                        <img class="custom-video" src="{% static 'images/images.png'%}">                       
+                            Your browser does not support the video tag.
+                        </img>
+                    </div>                -->
+                </section>
+            </main>
+        </header>
+    {% if messages %}
+        {% for msg in messages %}
+        <script>
+            alert('{{ msg }}'); 
+        </script>
+        {% endfor %}
+    {% endif %}
+        <!-- JAVASCRIPT FILES -->
+<!--         <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/countdown.js"></script>
+        <script src="js/init.js"></script>-->
+
+    </body>
+</html>

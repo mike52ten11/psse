@@ -1,0 +1,249 @@
+{% comment %} threewinding 表格與相關操作 {% endcomment %}
+<div class="card mb-4">
+  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">元件9: threewinding</h6>
+    <!-- <button type="button" class="btn btn-sm btn-primary" id="add-area-row">新增一列</button> -->
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="threewinding-table">
+        <thead>
+          <tr>
+            <th width="10%">操作</th>
+            <th>From BUS Number</th>
+            <th>To Bus Number</th>
+            <th>Last Bus Number</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Winding  I/O Code</th>
+            <th>Impedance I/O Code</th>
+            <th>Admittance I/O Code</th>
+            <th>W1-2R (pu or watts)</th>
+            <th>W1-2X (pu)</th>
+            <th>W2-3R (pu or watts)</th>
+            <th>W2-3X (pu)</th>
+            <th>W3-1R (pu or watts)</th>
+            <th>W3-1X (pu)</th>
+            <th>Winding 1-2 MVA Base</th>
+            <th>Winding 2-3 MVA Base</th>
+            <th>Winding 3-1 MVA Base</th>
+            <th>Impaedance Adjustment Code</th>
+            <th>connection</th>
+            <th>R01 (pu)</th>
+            <th>X01 (pu)</th>
+            <th>R02 (pu)</th>
+            <th>X02 (pu)</th>
+            <th>R03 (pu)</th>
+            <th>X03 (pu)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if prepare_writing_data_threewinding %}
+            {% for item in prepare_writing_data_threewinding %}
+              <tr data-row="{{ item.row }}">
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-sm btn-danger delete-threewinding-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">刪除</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary save-threewinding-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">確定修改</span>
+                    </button>
+                  </div>
+                </td>
+                <td><input type="text" name="from_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.from_bus_number }}"></td>
+                <td><input type="text" name="to_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.to_bus_number }}"></td>
+                <td><input type="text" name="last_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.last_bus_number }}"></td>
+                <td><input type="text" name="id_{{ item.row }}" class="form-control w-auto" value="{{ item.id }}"></td>
+                <td><input type="text" name="name_{{ item.row }}" class="form-control w-auto" value="{{ item.name }}"></td>
+                <td><input type="text" name="winding_i_o_code_{{ item.row }}" class="form-control w-auto" value="{{ item.winding_i_o_code }}"></td>
+                <td><input type="text" name="impedance_i_o_code_{{ item.row }}" class="form-control w-auto" value="{{ item.impedance_i_o_code }}"></td>
+                <td><input type="text" name="admittance_i_o_code_{{ item.row }}" class="form-control w-auto" value="{{ item.admittance_i_o_code }}"></td>
+                <td><input type="text" name="w1_2r_pu_or_watts_{{ item.row }}" class="form-control w-auto" value="{{ item.w1_2r_pu_or_watts }}"></td>
+                <td><input type="text" name="w1_2x_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.w1_2x_pu }}"></td>
+                <td><input type="text" name="w2_3r_pu_or_watts_{{ item.row }}" class="form-control w-auto" value="{{ item.w2_3r_pu_or_watts }}"></td>
+                <td><input type="text" name="w2_3x_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.w2_3x_pu }}"></td>
+                <td><input type="text" name="w3_1r_pu_or_watts_{{ item.row }}" class="form-control w-auto" value="{{ item.w3_1r_pu_or_watts }}"></td>
+                <td><input type="text" name="w3_1x_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.w3_1x_pu }}"></td>
+                <td><input type="text" name="winding_1_2_mva_base_{{ item.row }}" class="form-control w-auto" value="{{ item.winding_1_2_mva_base }}"></td>
+                <td><input type="text" name="winding_2_3_mva_base_{{ item.row }}" class="form-control w-auto" value="{{ item.winding_2_3_mva_base }}"></td>
+                <td><input type="text" name="winding_3_1_mva_base_{{ item.row }}" class="form-control w-auto" value="{{ item.winding_3_1_mva_base }}"></td>
+                <td><input type="text" name="impaedance_adjustment_code_{{ item.row }}" class="form-control w-auto" value="{{ item.impaedance_adjustment_code }}"></td>
+                <td><input type="text" name="connection_{{ item.row }}" class="form-control w-auto" value="{{ item.connection }}"></td>
+                <td><input type="text" name="r01_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.r01_pu }}"></td>
+                <td><input type="text" name="x01_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.x01_pu }}"></td>
+                <td><input type="text" name="r02_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.r02_pu }}"></td>
+                <td><input type="text" name="x02_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.x02_pu }}"></td>
+                <td><input type="text" name="r03_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.r03_pu }}"></td>
+                <td><input type="text" name="x03_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.x03_pu }}"></td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const executionResultDiv = document.getElementById('writedata-result');
+
+    // 為表格中的所有現有行添加事件監聽
+    document.querySelectorAll('#threewinding-table tbody tr').forEach(row => {
+      addEventListenersToRow(row);
+    });
+
+    // 添加事件監聽器到行中的按鈕
+    function addEventListenersToRow(row) {
+      // 刪除按鈕事件
+      const deleteBtn = row.querySelector('.delete-threewinding-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          if (confirm('確定要刪除這一列嗎？')) {
+            // 發送Ajax請求刪除
+            fetch(`/delete/threewinding/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                // 從DOM中移除該行
+                row.remove();
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }
+        });
+      }
+
+      // 確定修改按鈕事件
+      const saveBtn = row.querySelector('.save-threewinding-btn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          const fromBusNumber = row.querySelector(`input[name="from_bus_number_${rowId}"]`).value;
+          const toBusNumber = row.querySelector(`input[name="to_bus_number_${rowId}"]`).value;
+          const lastBusNumber = row.querySelector(`input[name="last_bus_number_${rowId}"]`).value;
+          const id = row.querySelector(`input[name="id_${rowId}"]`).value;
+          const name = row.querySelector(`input[name="name_${rowId}"]`).value;
+          const windingIOCode = row.querySelector(`input[name="winding_i_o_code_${rowId}"]`).value;
+          const impedanceIOCode = row.querySelector(`input[name="impedance_i_o_code_${rowId}"]`).value;
+          const admittanceIOCode = row.querySelector(`input[name="admittance_i_o_code_${rowId}"]`).value;
+          const w12rPuOrWatts = row.querySelector(`input[name="w1_2r_pu_or_watts_${rowId}"]`).value;
+          const w12xPu = row.querySelector(`input[name="w1_2x_pu_${rowId}"]`).value;
+          const w23rPuOrWatts = row.querySelector(`input[name="w2_3r_pu_or_watts_${rowId}"]`).value;
+          const w23xPu = row.querySelector(`input[name="w2_3x_pu_${rowId}"]`).value;
+          const w31rPuOrWatts = row.querySelector(`input[name="w3_1r_pu_or_watts_${rowId}"]`).value;
+          const w31xPu = row.querySelector(`input[name="w3_1x_pu_${rowId}"]`).value;
+          const winding12MvaBase = row.querySelector(`input[name="winding_1_2_mva_base_${rowId}"]`).value;
+          const winding23MvaBase = row.querySelector(`input[name="winding_2_3_mva_base_${rowId}"]`).value;
+          const winding31MvaBase = row.querySelector(`input[name="winding_3_1_mva_base_${rowId}"]`).value;
+          const impaedanceAdjustmentCode = row.querySelector(`input[name="impaedance_adjustment_code_${rowId}"]`).value;
+          const connection = row.querySelector(`input[name="connection_${rowId}"]`).value;
+          const r01Pu = row.querySelector(`input[name="r01_pu_${rowId}"]`).value;
+          const x01Pu = row.querySelector(`input[name="x01_pu_${rowId}"]`).value;
+          const r02Pu = row.querySelector(`input[name="r02_pu_${rowId}"]`).value;
+          const x02Pu = row.querySelector(`input[name="x02_pu_${rowId}"]`).value;
+          const r03Pu = row.querySelector(`input[name="r03_pu_${rowId}"]`).value;
+          const x03Pu = row.querySelector(`input[name="x03_pu_${rowId}"]`).value;
+          if (confirm('確定要修改這一列嗎？')){
+          // 發送Ajax請求修改資料
+            fetch(`/edit/threewinding/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                fromBusNumber: fromBusNumber,
+                toBusNumber: toBusNumber,
+                lastBusNumber: lastBusNumber,
+                id: id,
+                name: name,
+                windingIOCode: windingIOCode,
+                impedanceIOCode: impedanceIOCode,
+                admittanceIOCode: admittanceIOCode,
+                w12rPuOrWatts: w12rPuOrWatts,
+                w12xPu: w12xPu,
+                w23rPuOrWatts: w23rPuOrWatts,
+                w23xPu: w23xPu,
+                w31rPuOrWatts: w31rPuOrWatts,
+                w31xPu: w31xPu,
+                winding12MvaBase: winding12MvaBase,
+                winding23MvaBase: winding23MvaBase,
+                winding31MvaBase: winding31MvaBase,
+                impaedanceAdjustmentCode: impaedanceAdjustmentCode,
+                connection: connection,
+                r01Pu: r01Pu,
+                x01Pu: x01Pu,
+                r02Pu: r02Pu,
+                x02Pu: x02Pu,
+                r03Pu: r03Pu,
+                x03Pu: x03Pu
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }  
+        });
+      }
+    }
+  });
+</script>

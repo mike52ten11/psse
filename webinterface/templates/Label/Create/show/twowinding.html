@@ -1,0 +1,225 @@
+{% comment %} twowinding 表格與相關操作 {% endcomment %}
+<div class="card mb-4">
+  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">元件8: twowinding</h6>
+    <!-- <button type="button" class="btn btn-sm btn-primary" id="add-area-row">新增一列</button> -->
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="twowinding-table">
+        <thead>
+          <tr>
+            <th width="10%">操作</th>
+            <th>From BUS Number</th>
+            <th>To Bus Number</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Controlled Bus</th>
+            <th>Winding I/O Code</th>
+            <th>Impedance I/O Code</th>
+            <th>Admittance I/O Code</th>
+            <th>Specified R (pu or watts)</th>
+            <th>Specified X (pu)</th>
+            <th>Winding</th>
+            <th>Wind 1</th>
+            <th>Wind 1 Ratio</th> 
+            <th>Wind 2</th>
+            <th>Wind 2 Ratio</th>
+            <th>RATE1 (MVA)</th>
+            <th>Connection Code</th>
+            <th>R01 (pu)</th>
+            <th>X01 (pu)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if prepare_writing_data_twowinding %}
+            {% for item in prepare_writing_data_twowinding %}
+              <tr data-row="{{ item.row }}">
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-sm btn-danger delete-twowinding-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">刪除</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary save-twowinding-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">確定修改</span>
+                    </button>
+                  </div>
+                </td>
+                <td><input type="text" name="from_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.from_bus_number }}"></td>
+                <td><input type="text" name="to_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.to_bus_number }}"></td>
+                <td><input type="text" name="id_{{ item.row }}" class="form-control w-auto" value="{{ item.id }}"></td>
+                <td><input type="text" name="name_{{ item.row }}" class="form-control w-auto" value="{{ item.name }}"></td>
+                <td><input type="text" name="controlled_bus_{{ item.row }}" class="form-control w-auto" value="{{ item.controlled_bus }}"></td>
+                <td><input type="text" name="winding_i_o_code_{{ item.row }}" class="form-control w-auto" value="{{ item.winding_i_o_code }}"></td>
+                <td><input type="text" name="impedance_i_o_code_{{ item.row }}" class="form-control w-auto" value="{{ item.impedance_i_o_code }}"></td>
+                <td><input type="text" name="admittance_i_o_code_{{ item.row }}" class="form-control w-auto" value="{{ item.admittance_i_o_code }}"></td>
+                <td><input type="text" name="specified_r_pu_or_watts_{{ item.row }}" class="form-control w-auto" value="{{ item.specified_r_pu_or_watts }}"></td>
+                <td><input type="text" name="specified_x_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.specified_x_pu }}"></td>
+                <td><input type="text" name="winding_{{ item.row }}" class="form-control w-auto" value="{{ item.winding }}"></td>
+                <td><input type="text" name="wind_1_{{ item.row }}" class="form-control w-auto" value="{{ item.wind_1 }}"></td>
+                <td><input type="text" name="wind_1_ratio_{{ item.row }}" class="form-control w-auto" value="{{ item.wind_1_ratio }}"></td>                
+                <td><input type="text" name="wind_2_{{ item.row }}" class="form-control w-auto" value="{{ item.wind_2 }}"></td>
+                <td><input type="text" name="wind_2_ratio_{{ item.row }}" class="form-control w-auto" value="{{ item.wind_2_ratio }}"></td>
+                <td><input type="text" name="rate1_mva_{{ item.row }}" class="form-control w-auto" value="{{ item.rate1_mva }}"></td>
+                <td><input type="text" name="connection_code_{{ item.row }}" class="form-control w-auto" value="{{ item.connection_code }}"></td>
+                <td><input type="text" name="r01_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.r01_pu }}"></td>
+                <td><input type="text" name="x01_pu_{{ item.row }}" class="form-control w-auto" value="{{ item.x01_pu }}"></td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const executionResultDiv = document.getElementById('writedata-result');
+
+    // 為表格中的所有現有行添加事件監聽
+    document.querySelectorAll('#twowinding-table tbody tr').forEach(row => {
+      addEventListenersToRow(row);
+    });
+
+    // 添加事件監聽器到行中的按鈕
+    function addEventListenersToRow(row) {
+      // 刪除按鈕事件
+      const deleteBtn = row.querySelector('.delete-twowinding-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          if (confirm('確定要刪除這一列嗎？')) {
+            // 發送Ajax請求刪除
+            fetch(`/delete/twowinding/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                // 從DOM中移除該行
+                row.remove();
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }
+        });
+      }
+
+      // 確定修改按鈕事件
+      const saveBtn = row.querySelector('.save-twowinding-btn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          const fromBusNumber = row.querySelector(`input[name="from_bus_number_${rowId}"]`).value;
+          const toBusNumber = row.querySelector(`input[name="to_bus_number_${rowId}"]`).value;
+          const id = row.querySelector(`input[name="id_${rowId}"]`).value;
+          const name = row.querySelector(`input[name="name_${rowId}"]`).value;
+          const controlledBus = row.querySelector(`input[name="controlled_bus_${rowId}"]`).value;
+          const windingIOCode = row.querySelector(`input[name="winding_i_o_code_${rowId}"]`).value;
+          const impedanceIOCode = row.querySelector(`input[name="impedance_i_o_code_${rowId}"]`).value;
+          const admittanceIOCode = row.querySelector(`input[name="admittance_i_o_code_${rowId}"]`).value;
+          const specifiedRPuOrWatts = row.querySelector(`input[name="specified_r_pu_or_watts_${rowId}"]`).value;
+          const specifiedXPu = row.querySelector(`input[name="specified_x_pu_${rowId}"]`).value;
+          const winding = row.querySelector(`input[name="winding_${rowId}"]`).value;
+          const wind1 = row.querySelector(`input[name="wind_1_${rowId}"]`).value;
+          const wind1Ratio = row.querySelector(`input[name="wind_1_ratio_${rowId}"]`).value;
+          const wind2Ratio = row.querySelector(`input[name="wind_2_ratio_${rowId}"]`).value;
+          const wind2 = row.querySelector(`input[name="wind_2_${rowId}"]`).value;
+          const rate1Mva = row.querySelector(`input[name="rate1_mva_${rowId}"]`).value;
+          const connectionCode = row.querySelector(`input[name="connection_code_${rowId}"]`).value;
+          const r01Pu = row.querySelector(`input[name="r01_pu_${rowId}"]`).value;
+          const x01Pu = row.querySelector(`input[name="x01_pu_${rowId}"]`).value;
+          if (confirm('確定要修改這一列嗎？')){
+          // 發送Ajax請求修改資料
+            fetch(`/edit/twowinding/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+              fromBusNumber: fromBusNumber,
+              toBusNumber: toBusNumber,
+              id: id,
+              name: name,
+              controlledBus: controlledBus,
+              windingIOCode: windingIOCode,
+              impedanceIOCode: impedanceIOCode,
+              admittanceIOCode: admittanceIOCode,
+              specifiedRPuOrWatts: specifiedRPuOrWatts,
+              specifiedXPu: specifiedXPu,
+              winding: winding,
+              wind1: wind1,
+              wind1Ratio: wind1Ratio,
+              wind2Ratio: wind2Ratio,
+              wind2: wind2,
+              rate1Mva: rate1Mva,
+              connectionCode: connectionCode,
+              r01Pu: r01Pu,
+              x01Pu: x01Pu
+            })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }  
+        });
+      }
+    }
+  });
+</script>

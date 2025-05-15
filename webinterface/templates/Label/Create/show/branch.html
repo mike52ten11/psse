@@ -1,0 +1,199 @@
+{% comment %} branch 表格與相關操作 {% endcomment %}
+<div class="card mb-4">
+  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">元件7: branch</h6>
+    <!-- <button type="button" class="btn btn-sm btn-primary" id="add-area-row">新增一列</button> -->
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="branch-table">
+        <thead>
+          <tr>
+            <th>操作</th>
+            <th>From BUS Number</th>
+            <th>To Bus Number</th>
+            <th>ID</th>
+            <th>LineR</th>
+            <th>LineX</th>
+            <th>ChargingB</th>
+            <th>Length</th>
+            <th>RATE1</th>
+            <th>NAME</th>
+            <th>R-Zero</th>
+            <th>X-Zero</th>
+            <th>B-Zero</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if prepare_writing_data_branch %}
+            {% for item in prepare_writing_data_branch %}
+              <tr data-row="{{ item.row }}">
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-sm btn-danger delete-branch-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">刪除</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary save-branch-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">確定修改</span>
+                    </button>
+                  </div>
+                </td>
+                
+                <td><input type="text" name="from_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.from_bus_number }}"></td>
+                <td><input type="text" name="to_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.to_bus_number }}"></td>
+                <td><input type="text" name="id_{{ item.row }}" class="form-control w-auto" value="{{ item.id }}"></td>
+                <td><input type="text" name="line_r_{{ item.row }}" class="form-control w-auto" value="{{ item.line_r }}"></td>
+                <td><input type="text" name="line_x_{{ item.row }}" class="form-control w-auto" value="{{ item.line_x }}"></td>                
+                <td><input type="text" name="charging_b_{{ item.row }}" class="form-control w-auto" value="{{ item.charging_b }}"></td>
+                <td><input type="text" name="length_{{ item.row }}" class="form-control w-auto" value="{{ item.length }}"></td>
+                <td><input type="text" name="rate1_{{ item.row }}" class="form-control w-auto" value="{{ item.rate1 }}"></td>
+                <td><input type="text" name="name_{{ item.row }}" class="form-control w-auto" value="{{ item.name }}"></td>
+                <td><input type="text" name="r_zero_{{ item.row }}" class="form-control w-auto" value="{{ item.r_zero }}"></td>
+                <td><input type="text" name="x_zero_{{ item.row }}" class="form-control w-auto" value="{{ item.x_zero }}"></td>
+                <td><input type="text" name="b_zero_{{ item.row }}" class="form-control w-auto" value="{{ item.b_zero }}"></td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const executionResultDiv = document.getElementById('writedata-result');
+
+    // 為表格中的所有現有行添加事件監聽
+    document.querySelectorAll('#branch-table tbody tr').forEach(row => {
+      addEventListenersToRow(row);
+    });
+
+    // 添加事件監聽器到行中的按鈕
+    function addEventListenersToRow(row) {
+      // 刪除按鈕事件
+      const deleteBtn = row.querySelector('.delete-branch-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          if (confirm('確定要刪除這一列嗎？')) {
+            // 發送Ajax請求刪除
+            fetch(`/delete/branch/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                // 從DOM中移除該行
+                row.remove();
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }
+        });
+      }
+
+      // 確定修改按鈕事件
+      const saveBtn = row.querySelector('.save-branch-btn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          const fromBusNumber = row.querySelector(`input[name="from_bus_number_${rowId}"]`).value;
+          const toBusNumber = row.querySelector(`input[name="to_bus_number_${rowId}"]`).value;
+          const id = row.querySelector(`input[name="id_${rowId}"]`).value;
+          const lineR = row.querySelector(`input[name="line_r_${rowId}"]`).value;
+          const lineX = row.querySelector(`input[name="line_x_${rowId}"]`).value;          
+          const chargingB = row.querySelector(`input[name="charging_b_${rowId}"]`).value;
+          const length = row.querySelector(`input[name="length_${rowId}"]`).value;
+          const rate1 = row.querySelector(`input[name="rate1_${rowId}"]`).value;
+          const name = row.querySelector(`input[name="name_${rowId}"]`).value;
+          const rZero = row.querySelector(`input[name="r_zero_${rowId}"]`).value;
+          const xZero = row.querySelector(`input[name="x_zero_${rowId}"]`).value;
+          const bZero = row.querySelector(`input[name="b_zero_${rowId}"]`).value;
+
+          if (confirm('確定要修改這一列嗎？')){
+          // 發送Ajax請求修改資料
+            fetch(`/edit/branch/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                fromBusNumber: fromBusNumber,
+                toBusNumber: toBusNumber,
+                id: id,
+                lineR: lineR,
+                lineX: lineX,
+                chargingB: chargingB,
+                length: length,
+                rate1: rate1,
+                name: name,
+                rZero: rZero,
+                xZero: xZero,
+                bZero: bZero
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }  
+        });
+      }
+    }
+  });
+</script>

@@ -1,0 +1,265 @@
+{% comment %} threewinding_winding 表格與相關操作 {% endcomment %}
+<div class="card mb-4">
+  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">元件9-2: threewinding_winding</h6>
+    <!-- <button type="button" class="btn btn-sm btn-primary" id="add-area-row">新增一列</button> -->
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="threewinding_winding-table">
+        <thead>
+          <tr>
+            <th width="10%">操作</th>
+            <th>From BUS Number</th>
+            <th>To Bus Number</th>
+            <th>Last Bus Number</th>
+            <th>BusNumber(要修改哪一個的Bus)</th>
+            <th>Controlled</th>
+            <th>Tap_Positions</th>
+            <th>Impendance</th>
+            <th>RATE1</th>
+            <th>RATE2</th>
+            <th>RATE3</th>
+            <th>RATE4</th>
+            <th>RATE5</th>
+            <th>RATE6</th>
+            <th>RATE7</th>
+            <th>RATE8</th>
+            <th>RATE9</th>
+            <th>RATE10</th>
+            <th>RATE11</th>
+            <th>RATE12</th>
+            <th>Ratio</th>
+            <th>Nominal</th>
+            <th>Angle</th>
+            <th>Rmax</th>
+            <th>Rmin</th>
+            <th>Vmax</th>
+            <th>Vmin</th>
+            <th>Wnd_Connect</th>
+            <th>Load_Drop_1</th>
+            <th>Load_Drop_2</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if prepare_writing_data_threewinding_winding %}
+            {% for item in prepare_writing_data_threewinding_winding %}
+              <tr data-row="{{ item.row }}">
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-sm btn-danger delete-threewinding_winding-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">刪除</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary save-threewinding_winding-btn mx-1 d-inline-flex justify-content-center align-items-center" data-row="{{ item.row }}">
+                      <span class="text-nowrap">確定修改</span>
+                    </button>
+                  </div>
+                </td>
+                <td><input type="text" name="from_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.from_bus_number }}"></td>
+                <td><input type="text" name="to_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.to_bus_number }}"></td>
+                <td><input type="text" name="last_bus_number_{{ item.row }}" class="form-control w-auto" value="{{ item.last_bus_number }}"></td>
+                <td><input type="text" name="bus_number_to_modify_{{ item.row }}" class="form-control w-auto" value="{{ item.bus_number_to_modify }}"></td>
+                <td><input type="text" name="controlled_{{ item.row }}" class="form-control w-auto" value="{{ item.controlled }}"></td>
+                <td><input type="text" name="tap_positions_{{ item.row }}" class="form-control w-auto" value="{{ item.tap_positions }}"></td>
+                <td><input type="text" name="impendance_{{ item.row }}" class="form-control w-auto" value="{{ item.impendance }}"></td>
+                <td><input type="text" name="rate1_{{ item.row }}" class="form-control w-auto" value="{{ item.rate1 }}"></td>
+                <td><input type="text" name="rate2_{{ item.row }}" class="form-control w-auto" value="{{ item.rate2 }}"></td>
+                <td><input type="text" name="rate3_{{ item.row }}" class="form-control w-auto" value="{{ item.rate3 }}"></td>
+                <td><input type="text" name="rate4_{{ item.row }}" class="form-control w-auto" value="{{ item.rate4 }}"></td>
+                <td><input type="text" name="rate5_{{ item.row }}" class="form-control w-auto" value="{{ item.rate5 }}"></td>
+                <td><input type="text" name="rate6_{{ item.row }}" class="form-control w-auto" value="{{ item.rate6 }}"></td>
+                <td><input type="text" name="rate7_{{ item.row }}" class="form-control w-auto" value="{{ item.rate7 }}"></td>
+                <td><input type="text" name="rate8_{{ item.row }}" class="form-control w-auto" value="{{ item.rate8 }}"></td>
+                <td><input type="text" name="rate9_{{ item.row }}" class="form-control w-auto" value="{{ item.rate9 }}"></td>
+                <td><input type="text" name="rate10_{{ item.row }}" class="form-control w-auto" value="{{ item.rate10 }}"></td>
+                <td><input type="text" name="rate11_{{ item.row }}" class="form-control w-auto" value="{{ item.rate11 }}"></td>
+                <td><input type="text" name="rate12_{{ item.row }}" class="form-control w-auto" value="{{ item.rate12 }}"></td>
+                <td><input type="text" name="ratio_{{ item.row }}" class="form-control w-auto" value="{{ item.ratio }}"></td>
+                <td><input type="text" name="nominal_{{ item.row }}" class="form-control w-auto" value="{{ item.nominal }}"></td>
+                <td><input type="text" name="angle_{{ item.row }}" class="form-control w-auto" value="{{ item.angle }}"></td>
+                <td><input type="text" name="rmax_{{ item.row }}" class="form-control w-auto" value="{{ item.rmax }}"></td>
+                <td><input type="text" name="rmin_{{ item.row }}" class="form-control w-auto" value="{{ item.rmin }}"></td>
+                <td><input type="text" name="vmax_{{ item.row }}" class="form-control w-auto" value="{{ item.vmax }}"></td>
+                <td><input type="text" name="vmin_{{ item.row }}" class="form-control w-auto" value="{{ item.vmin }}"></td>
+                <td><input type="text" name="wnd_connect_{{ item.row }}" class="form-control w-auto" value="{{ item.wnd_connect }}"></td>
+                <td><input type="text" name="load_drop_1_{{ item.row }}" class="form-control w-auto" value="{{ item.load_drop_1 }}"></td>
+                <td><input type="text" name="load_drop_2_{{ item.row }}" class="form-control w-auto" value="{{ item.load_drop_2 }}"></td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const executionResultDiv = document.getElementById('writedata-result');
+
+    // 為表格中的所有現有行添加事件監聽
+    document.querySelectorAll('#threewinding_winding-table tbody tr').forEach(row => {
+      addEventListenersToRow(row);
+    });
+
+    // 添加事件監聽器到行中的按鈕
+    function addEventListenersToRow(row) {
+      // 刪除按鈕事件
+      const deleteBtn = row.querySelector('.delete-threewinding_winding-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          if (confirm('確定要刪除這一列嗎？')) {
+            // 發送Ajax請求刪除
+            fetch(`/delete/threewinding_winding/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                // 從DOM中移除該行
+                row.remove();
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }
+        });
+      }
+
+      // 確定修改按鈕事件
+      const saveBtn = row.querySelector('.save-threewinding_winding-btn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row');
+          const fromBusNumber = row.querySelector(`input[name="from_bus_number_${rowId}"]`).value;
+          const toBusNumber = row.querySelector(`input[name="to_bus_number_${rowId}"]`).value;
+          const lastBusNumber = row.querySelector(`input[name="last_bus_number_${rowId}"]`).value;
+          const busNumberToModify = row.querySelector(`input[name="bus_number_to_modify_${rowId}"]`).value;
+          const controlled = row.querySelector(`input[name="controlled_${rowId}"]`).value;
+          const tapPositions = row.querySelector(`input[name="tap_positions_${rowId}"]`).value;
+          const impendance = row.querySelector(`input[name="impendance_${rowId}"]`).value;
+          const rate1 = row.querySelector(`input[name="rate1_${rowId}"]`).value;
+          const rate2 = row.querySelector(`input[name="rate2_${rowId}"]`).value;
+          const rate3 = row.querySelector(`input[name="rate3_${rowId}"]`).value;
+          const rate4 = row.querySelector(`input[name="rate4_${rowId}"]`).value;
+          const rate5 = row.querySelector(`input[name="rate5_${rowId}"]`).value;
+          const rate6 = row.querySelector(`input[name="rate6_${rowId}"]`).value;
+          const rate7 = row.querySelector(`input[name="rate7_${rowId}"]`).value;
+          const rate8 = row.querySelector(`input[name="rate8_${rowId}"]`).value;
+          const rate9 = row.querySelector(`input[name="rate9_${rowId}"]`).value;
+          const rate10 = row.querySelector(`input[name="rate10_${rowId}"]`).value;
+          const rate11 = row.querySelector(`input[name="rate11_${rowId}"]`).value;
+          const rate12 = row.querySelector(`input[name="rate12_${rowId}"]`).value;
+          const ratio = row.querySelector(`input[name="ratio_${rowId}"]`).value;
+          const nominal = row.querySelector(`input[name="nominal_${rowId}"]`).value;
+          const angle = row.querySelector(`input[name="angle_${rowId}"]`).value;
+          const rmax = row.querySelector(`input[name="rmax_${rowId}"]`).value;
+          const rmin = row.querySelector(`input[name="rmin_${rowId}"]`).value;
+          const vmax = row.querySelector(`input[name="vmax_${rowId}"]`).value;
+          const vmin = row.querySelector(`input[name="vmin_${rowId}"]`).value;
+          const wndConnect = row.querySelector(`input[name="wnd_connect_${rowId}"]`).value;
+          const loadDrop1 = row.querySelector(`input[name="load_drop_1_${rowId}"]`).value;
+          const loadDrop2 = row.querySelector(`input[name="load_drop_2_${rowId}"]`).value;
+          if (confirm('確定要修改這一列嗎？')){
+          // 發送Ajax請求修改資料
+            fetch(`/edit/threewinding_winding/${rowId}/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                fromBusNumber: fromBusNumber,
+                toBusNumber: toBusNumber,
+                lastBusNumber: lastBusNumber,
+                busNumberToModify: busNumberToModify,
+                controlled: controlled,
+                tapPositions: tapPositions,
+                impendance: impendance,
+                rate1: rate1,
+                rate2: rate2,
+                rate3: rate3,
+                rate4: rate4,
+                rate5: rate5,
+                rate6: rate6,
+                rate7: rate7,
+                rate8: rate8,
+                rate9: rate9,
+                rate10: rate10,
+                rate11: rate11,
+                rate12: rate12,
+                ratio: ratio,
+                nominal: nominal,
+                angle: angle,
+                rmax: rmax,
+                rmin: rmin,
+                vmax: vmax,
+                vmin: vmin,
+                wndConnect: wndConnect,
+                loadDrop1: loadDrop1,
+                loadDrop2: loadDrop2
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                
+                // 顯示成功消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              } else {
+                // 顯示錯誤消息
+                executionResultDiv.innerHTML = `
+                  <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    ${data.message}
+                  </div>
+                `;
+              }
+            })
+            .catch(error => {
+              executionResultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  發生錯誤: ${error.message}
+                </div>
+              `;
+            });
+          }  
+        });
+      }
+    }
+  });
+</script>

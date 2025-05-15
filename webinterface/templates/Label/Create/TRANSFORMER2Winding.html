@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+
+  .autocomplete-dropdown {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: white;
+    border: 1px solid #ddd;
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 700; /* 增加z-index確保顯示在最上層 */
+  }
+  
+  .suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #f5f5f5;
+  }
+
+  .autocomplete-container {
+    position: relative;
+    z-index: auto;
+    
+  }
+
+  /* 確保輸入框容器也有較高的z-index */
+  .input-wrapper {
+    position: relative;
+    z-index: auto;
+  }
+
+  /* 確保卡片不會限制下拉選單的顯示 */
+  .card {
+    overflow: relative;
+    z-index: auto;
+  }
+
+  .card-body {
+    overflow: relative ;
+    z-index: 900;
+  }
+
+  /* 確保表格單元格不會遮擋下拉選單 */
+  table td {
+    position: relative;
+    z-index: 900;
+  }  
+  </style>
+  <section class="inner-page">
+
+    <div class="container">
+      <form method="GET" action= "{% url 'write_to_savfile_for_twowinding' %}"> 
+        
+        <br></br>
+        <div style="text-align: center; font-size:14pt;">
+          
+        
+        </div>
+        <br></br>
+        <div style='text-align:center;font-size:12pt;'><input  type="submit"  class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="write" value="確定新增"></div>
+        
+        <!-- <p class="mb-4">ZONE Table </p> -->
+        <br></br> 
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" style="font-size:10pt;">TRANSFORMER2Winding Data of {{ USER }}</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive" style="font-size:10pt; " >
+              
+                
+              <table>
+                <h4 class="text-center mb-4" style="color:red;">
+                  * 表示必填
+                </h4>                 
+                <tr>
+                  <td><sup class="required-mark">*</sup>From BUS Number</td> 
+                  <td class="input-wrapper">
+                    <div class="autocomplete-container" style="position: relative;">
+                      <input type="text" id="FromBusNumberInput" name="FromBusNumber" pattern="[0-9]+" required>
+                      <div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- <tr>
+                  <td>From Bus Number</td> 
+                  <td><input type="number" name="FromBusNumber"></td>
+                </tr>                  -->
+                <tr>
+                  <td><sup class="required-mark">*</sup>To Bus Number</td>                  
+                  <td class="input-wrapper">
+                    <div class="autocomplete-container" style="position: relative;">
+                      <input type="text" id="ToBusNumberInput" name="ToBusNumber" pattern="[0-9]+" required>
+                      <div id="autocompleteToBusDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                      </div>
+                    </div>
+                  </td>                  
+                </tr>        
+                <tr>
+                  <td>&nbsp;&nbsp;ID</td>
+                  <td><input type="text" name="ID" placeholder=1></td>
+                </tr>
+                <tr>
+                  <td>&nbsp;&nbsp;Name</td>
+                  <td><input type="text" name="Name"></td>
+                </tr>                 
+                <tr>
+                  <td>&nbsp;&nbsp;Controlled Bus</td>
+                  <td><input type="text" name="ControlledBus" placeholder="可不填 預設是From BUS Number"></td>
+                </tr>    
+                <tr>
+                  <td>&nbsp;&nbsp;Winding I/O Code</td>
+                  <td>
+                    <select name="Winding_int">
+                      <!-- <td><input type="text" name="Winding_int"></td> -->
+                      <option value="1" selected>Turns ratio (pu on bus base kV)</option>
+                      <option value="2">Winding voltage (kV)</option>
+                      <option value="3">Turns ratio (pu on nom wind kV)</option>
+                    </select>
+                  </td>
+                </tr> 
+
+
+                <tr>
+                  <td>&nbsp;&nbsp;Impedance I/O Code</td>
+                  <td>
+                    <select name="Impedance">
+                      <option value="1" selected>Zpu (system base)</option>
+                      <option value="2">Zpu (winding base)</option>
+                      <option value="3">Load loss & |Z|</option>
+
+                    </select>
+                  </td>                   
+                </tr>  
+  
+
+                <tr>
+                  <td>&nbsp;&nbsp;Admittance I/O Code</td>
+                  <td>
+
+                    <select name="Admittance">
+                      
+                      <option value="1" selected>Y pu (system base)</option>
+                      <option value="2">No load loss & exc. I</option>
+                    </select>
+                    
+                  </td>
+                </tr> 
+
+                <tr>
+                  <td>&nbsp;&nbsp;Specified R (pu or watts) </td>
+                  <td><input type="text" name="SpecifiedR" placeholder=0.00></td>
+                </tr>
+
+                <tr>
+                  <td>&nbsp;&nbsp;Specified X (pu)</td>
+                  <td><input type="text" name="SpecifiedX" placeholder=0.0001></td>
+                </tr>    
+  
+                <tr>
+                  <td>&nbsp;&nbsp;Winding MVA  Base</td>
+                  <td><input type="text" name="Winding" placeholder=100.0></td>
+                </tr> 
+
+                <tr>
+                  <td>&nbsp;&nbsp;Wind 1 Norminal kV</td>
+                  
+                  <td><input type="text" name="Wind1" placeholder=0.0></td>
+
+                </tr> 
+
+                <tr>
+                  <td>&nbsp;&nbsp;Wind 1 Ratio (pu or kv)</td>
+                  <td><input type="text" name="Wind1Ratio" placeholder=1.0></td>
+                </tr> 
+                
+                <tr>
+                  <td>&nbsp;&nbsp;Wind 2 Norminal kV</td>
+                  <td><input type="text" name="Wind2" placeholder=0.0></td>
+                </tr> 
+
+                <tr>
+                  <td>&nbsp;&nbsp;Wind 2 Ratio (pu or kv)</td>
+                  <td><input type="text" name="Wind2Ratio" placeholder=0.0></td>
+                </tr> 
+
+
+
+                <tr>
+                  <td>&nbsp;&nbsp;RATE1 (MVA)</td>
+                  <td><input type="text" name="RATE1"  placeholder=0.0></td>
+                </tr>         
+
+   
+
+                <tr>
+                  <td>&nbsp;&nbsp;Connection Code</td>
+
+                  <td>                  
+                    <select name="Connection">
+                      
+                      <option value="1">1- Series path, no ground path</option>
+                      <option value="2">2- No series path, ground winding 1</option>
+                      <option value="3">3- No series path, ground winding 2</option>
+                      <option value="4" selected>4- No series or ground paths</option>
+                      <option value="5">5- Series path, ground winding 2</option>
+                      <option value="6">6- No series path, ground winding 1, earth winding 2</option>
+                      <option value="7">7- No series path, earth winding 1, ground winding 2</option>
+                      <option value="8">8- Series path, ground each side</option>  
+                      <option value="9">9- Series path on each side, ground path at junction (auto)</option>
+                      <!-- <option value="10">10- </option> -->
+                      <option value="11">11- Series path, no ground path</option>
+                      <option value="12">12- No series path, ground winding 1</option>
+                      <option value="13">13- No series path, ground winding 2</option>
+                      <option value="14">14- No series or ground paths</option> 
+                      <option value="15">15- Series path, ground winding 2</option> 
+                      <option value="16">16- No series path, ground winding 1, earth winding 2</option>
+                      <option value="17">17- No series path, earth winding 1, ground winding 2</option> 
+                      <option value="18">18- Series path, ground each side</option>
+                      <option value="19">19- Series path on each side, ground path at junction (auto)</option>
+                      <option value="20">20- Series path on each side, ground path at junction</option>
+                      <option value="21">21- Series path, no ground path</option>
+                      <option value="22">22- Series path, no ground path (core)</option>
+                    </select>
+                  </td>
+                </tr>    
+                
+                <tr>
+                  <td>&nbsp;&nbsp;R01 (pu)</td>
+                  <td><input type="text" name="R01"  placeholder=0.00></td>
+                </tr>    
+                
+                <tr>
+                  <td>&nbsp;&nbsp;X01 (pu)</td>
+                  <td><input type="text" name="X01"  placeholder=0.0001></td>
+                </tr>    
+
+
+
+            </table>
+            <!-- 顯示已新增的暫存資料 -->
+            {% if temp_labeldata %}
+            <div class="mt-4">
+              <h6 class="font-weight-bold">已新增的內容：</h6>
+              {% for two_winding in temp_labeldata %}
+              <div class="mt-2">
+                two_winding Number: {{ two_winding.number }}, two_winding Name: {{ two_winding.name }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}              
+            </div>
+          </div>
+          
+        </div> 
+      </form>
+ 
+  </section>
+  <script>
+    //==========================================================================
+    //                          From Bus 的下拉選單
+    //==========================================================================
+
+    //define 從後台取得bus Data 的變數 
+    window.busData = window.busData || [];
+
+    //選取to bus number 的文字框 
+    const FromBusNumberInput = document.getElementById('FromBusNumberInput');
+
+    //定義to bus number 的下拉選單
+    const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+    
+    // 當點擊to bus number 文字框時觸發API請求
+    FromBusNumberInput.addEventListener('focus', async () => {
+      if (busData.length === 0) {
+        try {
+          // 從Django模板獲取用戶名
+          const username = '{{ USER }}';  
+
+          // 打api 獲取bus data
+          const response = await fetch(`/api/twowinding-list-of-api/?year=latest&user=${username}&labeltype=two_winding_transformer&fom_to_last_bus=from`);
+          
+          // 使用json格式 獲取bus data(後臺回傳json格式)
+          const jsonResponse = await response.json();
+          if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+            busData = jsonResponse.data;
+
+            showSuggestions(FromBusNumberInput.value);
+          }
+        } catch (error) {
+          console.error('Error fetching bus list:', error);
+        }
+      } else {
+        showSuggestions(FromBusNumberInput.value);
+      }
+    });
+    
+    // 監聽 from bus data 文字框輸入變化
+    FromBusNumberInput.addEventListener('input', () => {
+      showSuggestions(FromBusNumberInput.value);
+    });
+
+
+    // 顯示建議選項
+    function showSuggestions(inputValue) {
+      //根據使用者輸入來尋找bus data
+        const filteredData = busData.filter(bus => {
+
+        const busNumber = bus.fromnum.toString();  // 修改這裡來匹配你的API格式
+        return busNumber.includes(inputValue);
+      });
+    
+      if (filteredData.length > 0) {
+        autocompleteDropdown.innerHTML = filteredData
+          .map(bus => 
+          // `
+          //   <div class="suggestion-item" onclick="selectBus('${bus.fromnum}', '${bus.tonum}','${bus.circuit_id}')">  
+          //     ${bus.fromnum} - ${bus.fromname.trim()} - ${bus.tonum} - ${bus.toname.trim()} - ${bus.circuit_id}
+          //   </div>
+          // `
+          `
+            <div class="suggestion-item" onclick="selectBus('${bus.fromnum}', '${bus.tonum}', '${bus.transformer_id}')">  
+              From Bus: ${bus.fromnum} - ${bus.fromname.trim()} To Bus: ${bus.tonum} - ${bus.toname.trim()} ID: ${bus.transformer_id}
+            </div>
+          `          
+        )
+          .join('');
+        autocompleteDropdown.style.display = 'block';
+      } else {
+        autocompleteDropdown.style.display = 'none';
+      }
+    }
+    
+    // 選擇建議選項
+    function selectBus(fromnum, tonum, transformer_id) {
+      
+      FromBusNumberInput.value = fromnum;
+      // 如果需要，也可以自動填充bus name欄位
+      const tonumInput = document.querySelector('input[name="ToBusNumber"]');
+      const transformeridInput = document.querySelector('input[name="ID"]');
+      if (tonumInput) {
+        tonumInput.value = tonum;
+        transformeridInput.value = transformer_id;
+      }
+      autocompleteDropdown.style.display = 'none';
+    }
+    // 點擊文件其他地方時關閉下拉選單
+    document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-container')) {
+      autocompleteDropdown.style.display = 'none';
+    }
+  });
+  //==========================================================================
+  //                          To Bus 的下拉選單
+  //==========================================================================
+  //define 從後台取得bus Data 的變數 
+  window.tobusData = window.tobusData || [];
+
+  //選取to bus number 的文字框  
+  const ToBusNumberInput = document.getElementById('ToBusNumberInput');
+
+  //定義to bus number 的下拉選單
+  const autocompleteToBusDropdown = document.getElementById('autocompleteToBusDropdown');
+
+  // 當點擊to bus number 文字框時觸發API請求
+  ToBusNumberInput.addEventListener('focus', async () => {
+    if (tobusData.length === 0) {
+      try {
+        // 從Django模板獲取用戶名
+        const username = '{{ USER }}';  
+
+        // 打api 獲取bus data
+        const response = await fetch(`/api/twowinding-list-of-api/?year=latest&user=${username}&labeltype=two_winding_transformer&fom_to_last_bus=to`);
+
+        // 使用json格式 獲取bus data(後臺回傳json格式)
+        const jsonResponse = await response.json();
+
+        if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+          tobusData = jsonResponse.data;
+
+          showtobusSuggestions(ToBusNumberInput.value);
+        }
+      } catch (error) {
+        console.error('Error fetching bus list:', error);
+      }
+    } else {
+      showtobusSuggestions(ToBusNumberInput.value);
+    }
+  });
+
+  // 監聽to bus number 文字框輸入變化
+  ToBusNumberInput.addEventListener('input', () => {
+    showtobusSuggestions(ToBusNumberInput.value);
+  });
+
+
+  // 點擊文件其他地方時關閉下拉選單
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-container')) {
+      autocompleteToBusDropdown.style.display = 'none';
+    }
+  });
+  // 顯示建議選項
+  function showtobusSuggestions(inputValue) {
+    //根據使用者輸入來尋找bus data
+      const filteredData = tobusData.filter(bus => {
+
+      const busNumber = bus.tonum.toString();  // 修改這裡來匹配你的API格式
+      return busNumber.includes(inputValue);
+    });
+
+    if (filteredData.length > 0) {
+      autocompleteToBusDropdown.innerHTML = filteredData
+        .map(bus => 
+        // `
+        //   <div class="suggestion-item" onclick="selectBus('${bus.fromnum}', '${bus.tonum}','${bus.circuit_id}')">  
+        //     ${bus.fromnum} - ${bus.fromname.trim()} - ${bus.tonum} - ${bus.toname.trim()} - ${bus.circuit_id}
+        //   </div>
+        // `
+        `
+          <div class="suggestion-item" onclick="selecttoBus('${bus.fromnum}', '${bus.tonum}', ${bus.transformer_id})">  
+            From Bus: ${bus.fromnum} - ${bus.fromname.trim()} To Bus: ${bus.tonum} - ${bus.toname.trim()} ID: ${bus.transformer_id}
+          </div>
+        `          
+      )
+        .join('');
+      autocompleteToBusDropdown.style.display = 'block';
+    } else {
+      autocompleteToBusDropdown.style.display = 'none';
+    }
+  }
+
+  // 填充建議選項到 to bus 文字框
+  function selecttoBus(fromnum, tonum, transformerid) {
+    ToBusNumberInput.value = tonum;
+    // 如果需要，也可以自動填充bus name欄位
+    const FromBusNumberInput = document.querySelector('input[name="FromBusNumber"]');
+    const transformeridInput = document.querySelector('input[name="ID"]');
+    if (FromBusNumberInput) {
+      FromBusNumberInput.value = fromnum;
+      transformeridInput.value = transformerid;
+    }
+    autocompleteToBusDropdown.style.display = 'none';
+  }        
+    </script>      
+ 
+{% endblock %}
+
+

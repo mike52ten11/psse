@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .autocomplete-dropdown {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #f5f5f5;
+  }
+  </style>
+
+<section class="inner-page">
+  <div class="container">
+    <form method="GET" action="{% url 'write_to_savfile_for_bus' %}">
+      <br>
+      <!-- <div style="text-align: center; font-size:14pt;">
+        <div>
+          {% for year in years %}
+            <input type="checkbox" id="{{ year }}" name="year" value="{{ year }}">
+            <label for="{{ year }}">{{ year }}</label>
+          {% endfor %}
+        </div>
+      </div> -->
+      <br>
+      <div style='text-align:center;font-size:12pt;'><input  type="submit"  class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="write" value="確定新增"></div>
+      <!-- <input type="submit" style='font-size:12pt;' class="d-grid gap-2 col-6 mx-auto table-responsive btn btn-success" name="write" value="確定新增"> -->
+      
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary" style="font-size:10pt;">Bus Data of {{ USER }}</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive" style="font-size:10pt;">
+            <table>
+              <tr>
+                <h4 class="text-center mb-4" style="color:red;">
+                  * 表示必填
+                </h4>
+                <td><sup class="required-mark">*</sup>BUS Number</td> 
+                <td>
+                  <div class="autocomplete-container" style="position: relative;">
+                    <input type="text" id="busNumberInput" name="BUSNumber" pattern="[0-9]+" required>
+                    <div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;BUS_Name</td>
+                <td><input type="text" name="BUSName"  maxlength="8" value=" "></td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;Code</td>
+                <!-- <td><input type="text" name="Code" pattern="[0-9]+" required=""></td> -->
+                <td>
+                  <select name="Code">
+                    <!-- <td><input type="text" name="Winding_int"></td> -->
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>                    
+                </td>
+              
+              </tr>   
+
+              <tr>
+                <td>&nbsp;&nbsp;Area Num</td>
+                <td>
+                  <div class="autocomplete-container" style="position: relative;">
+                    <input type="text" id="areaNumberInput" name="AreaNum" pattern="[0-9]+" value=1>
+                    <div id="autocompleteAreaDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                    </div>
+                  </div>
+                </td>                
+                <!-- <td><input type="text" name="AreaNum" pattern="[0-9]+" required=""></td> -->
+              </tr> 
+
+              <tr>
+                <td>&nbsp;&nbsp;Zone Num</td>
+                <td>
+                  <div class="autocomplete-container" style="position: relative;">
+                    <input type="text" id="ZONENumberInput" name="ZoneNum" pattern="[0-9]+" value=1>
+                    <div id="autocompleteZONEDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                    </div>
+                  </div>
+                </td>                  
+              </tr>
+            
+              <tr>
+                <td>&nbsp;&nbsp;Owner Num</td>
+                <td>
+                  <div class="autocomplete-container" style="position: relative;">
+                    <input type="text" id="OwnerNumberInput" name="OwnerNum" pattern="[0-9]+" value=1>
+                    <div id="autocompleteOwnerDropdown" class="autocomplete-dropdown" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; z-index: 1000;">
+                    </div>
+                  </div>                     
+                </td>
+                 
+                  
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;Base kV</td>
+                <td><input type="text" name="BasekV" pattern="[0-9]+\.[0-9]+" placeholder="例如: 13.8"  value=0.0></td>
+              </tr>
+
+              <tr>
+                <td>&nbsp;&nbsp;Voltage (pu)</td>
+                <td><input type="text" name="Voltage" pattern="[0-9]+\.[0-9]+" value="1.0" required=""></td>
+              </tr>
+            
+              <tr>
+                  <td>&nbsp;&nbsp;Angle (deg)</td>
+                  <td><input type="text" name="Angel"  value="0.0" required=""></td>
+              </tr>    
+              <!-- pattern="[0-9]+\.[0-9]+" -->
+              <tr>
+                <td>&nbsp;&nbsp;Normal Vmax (pu)</td>
+                <td><input type="text" name="NormalVmax" pattern="[0-9]+\.[0-9]+" value="1.1" required=""></td>
+              </tr> 
+
+              <tr>
+                <td>&nbsp;&nbsp;Normal Vmin (pu)</td>
+                <td><input type="text" name="NormalVmin" pattern="[0-9]+\.[0-9]+" value="0.9"  required=""></td>
+              </tr> 
+
+              <tr>
+                <td>&nbsp;&nbsp;Emergency Vmax (pu)</td>
+                <td><input type="text" name="EmergencyVmax" pattern="[0-9]+\.[0-9]+"  value="1.1" required=""></td>
+              </tr> 
+
+
+              <tr>
+                <td>&nbsp;&nbsp;Emergency Vmin (pu)</td>
+                <td><input type="text" name="EmergencyVmin" pattern="[0-9]+\.[0-9]+" value="0.9"   required=""></td>
+              </tr> 
+
+
+
+            </table>
+            
+            <!-- 顯示已新增的暫存資料 -->
+            {% if temp_labeldata %}
+            <div class="mt-4">
+              <h6 class="font-weight-bold">已新增的內容：</h6>
+              {% for bus in temp_labeldata %}
+              <div class="mt-2">
+                Bus Number: {{ bus.bus_number }}, Bus Name: {{ bus.bus_name }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+<script>
+  window.busData = window.busData || [];
+  // let busData = [];
+  const busNumberInput = document.getElementById('busNumberInput');
+  const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+  
+  // 當點擊文字框時觸發API請求
+  busNumberInput.addEventListener('focus', async () => {
+    if (busData.length === 0) {
+      try {
+        const username = '{{ USER }}';  // 從Django模板獲取用戶名
+        const response = await fetch(`/api/bus-list-of-api/?year=latest&user=${username}&labeltype=bus`);
+        const jsonResponse = await response.json();
+        if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+          busData = jsonResponse.data;
+          // console.log('處理後的 busData：', busData);
+          showSuggestions(busNumberInput.value);
+        }
+      } catch (error) {
+        console.error('Error fetching bus list:', error);
+      }
+    } else {
+      showSuggestions(busNumberInput.value);
+    }
+  });
+  
+  // 監聽輸入變化
+  busNumberInput.addEventListener('input', () => {
+    showSuggestions(busNumberInput.value);
+  });
+  
+  // 點擊文件其他地方時關閉下拉選單
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-container')) {
+      autocompleteDropdown.style.display = 'none';
+    }
+  });
+  
+  // 顯示建議選項
+  function showSuggestions(inputValue) {
+    const filteredData = busData.filter(bus => {
+      const busNumber = bus.num.toString();  // 
+      return busNumber.includes(inputValue);
+    });
+  
+    if (filteredData.length > 0) {
+      autocompleteDropdown.innerHTML = filteredData
+        .map(bus => `
+          <div class="suggestion-item" onclick="selectBus('${bus.num}', '${bus.name.trim()}', '${bus.zonenum}')">  
+            ${bus.num} - ${bus.name.trim() } :zone ${bus.zonenum}, ${bus.zonename.trim()}
+          </div>
+        `)
+        .join('');
+      autocompleteDropdown.style.display = 'block';
+    } else {
+      autocompleteDropdown.style.display = 'none';
+    }
+  }
+  
+  // 選擇建議選項
+  function selectBus(busNumber, busName,ZoneNum) {
+    busNumberInput.value = busNumber;
+    // 如果需要，也可以自動填充bus name欄位
+    const busNameInput = document.querySelector('input[name="BUSName"]');
+    const ZoneNumInput  = document.querySelector('input[name="ZoneNum"]');
+    if (busNameInput) {
+      busNameInput.value = busName;
+    }
+    if (ZoneNumInput) {
+      ZoneNumInput.value = ZoneNum;
+    }
+    autocompleteDropdown.style.display = 'none';
+  }
+  </script> 
+  <script>
+    //Base KV補值
+    document.querySelector('input[name="BasekV"]').addEventListener('blur', function() {
+      // 取得輸入值
+      let value = this.value.trim();
+      
+      // 檢查是否為空
+      if (value === '') return;
+      
+      // 檢查是否含有小數點
+      if (value.indexOf('.') === -1) {
+        // 如果沒有小數點，則添加 ".0"
+        this.value = value + '.0';
+      }
+    });
+  </script>   
+  
+  <script>
+    // AREA 
+    window.areaData = window.areaData || [];
+    // let busData = [];
+    const AREANumberInput = document.getElementById('areaNumberInput');
+    const autocompleteAreaDropdown = document.getElementById('autocompleteAreaDropdown');
+    
+    // 當點擊文字框時觸發API請求
+    AREANumberInput.addEventListener('focus', async () => {
+    if (areaData.length === 0) {
+      try {
+        const username = '{{ USER }}';  // 從Django模板獲取用戶名
+        const response = await fetch(`/api/area-list-of-api/?year=latest&user=${username}&labeltype=area`);
+        const jsonResponse = await response.json();
+        if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+          areaData = jsonResponse.data;
+          // console.log('處理後的 busData：', busData);
+          showSuggestions(AREANumberInput.value);
+        }
+      } catch (error) {
+        console.error('Error fetching area list:', error);
+      }
+    } else {
+      showAreaSuggestions(AREANumberInput.value);
+    }
+  });
+  
+  // 監聽輸入變化
+  AREANumberInput.addEventListener('input', () => {
+    autocompleteAreaDropdown(AREANumberInput.value);
+  });
+  
+  // 點擊文件其他地方時關閉下拉選單
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-container')) {
+      autocompleteAreaDropdown.style.display = 'none';
+    }
+  });
+  
+  // 顯示建議選項
+  function showAreaSuggestions(inputValue) {
+    const filteredData = areaData.filter(area => {
+      const areaNumber = area.num.toString();  // 修改這裡來匹配你的API格式
+      return areaNumber.includes(inputValue);
+    });
+  
+    if (filteredData.length > 0) {
+      autocompleteAreaDropdown.innerHTML = filteredData
+        .map(area => `
+          <div class="suggestion-item" onclick="selectArea('${area.num}')">  
+            ${area.num} - ${area.name.trim()}
+          </div>
+        `)
+        .join('');
+        autocompleteAreaDropdown.style.display = 'block';
+    } else {
+      autocompleteAreaDropdown.style.display = 'none';
+    }
+  }
+  
+  // 選擇建議選項
+  function selectArea(AREANumber) {
+    AREANumberInput.value = AREANumber;
+    autocompleteAreaDropdown.style.display = 'none';
+  }
+  </script> 
+
+  <script>
+    // Zone 
+    window.zoneData = window.zoneData || [];
+  // let busData = [];
+  const ZONENumberInput = document.getElementById('ZONENumberInput');
+  const autocompleteZONEDropdown = document.getElementById('autocompleteZONEDropdown');
+  
+  // 當點擊文字框時觸發API請求
+  ZONENumberInput.addEventListener('focus', async () => {
+    if (zoneData.length === 0) {
+      try {
+        const username = '{{ USER }}';  // 從Django模板獲取用戶名
+        const response = await fetch(`/api/zone-list-of-api/?year=latest&user=${username}&labeltype=zone`);
+        const jsonResponse = await response.json();
+        if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+          zoneData = jsonResponse.data;
+          // console.log('處理後的 busData：', busData);
+          showZoneSuggestions(ZONENumberInput.value);
+        }
+      } catch (error) {
+        console.error('Error fetching bus list:', error);
+      }
+    } else {
+      showZoneSuggestions(ZONENumberInput.value);
+    }
+  });
+  
+  // 監聽輸入變化
+  ZONENumberInput.addEventListener('input', () => {
+    showZoneSuggestions(ZONENumberInput.value);
+  });
+  
+  // 點擊文件其他地方時關閉下拉選單
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-container')) {
+      autocompleteZONEDropdown.style.display = 'none';
+    }
+  });
+  
+  // 顯示建議選項
+  function showZoneSuggestions(inputValue) {
+    const filteredData = zoneData.filter(zone => {
+      const zoneNumber = zone.num.toString();  // 修改這裡來匹配你的API格式
+      return zoneNumber.includes(inputValue);
+    });
+  
+    if (filteredData.length > 0) {
+      autocompleteZONEDropdown.innerHTML = filteredData
+        .map(zone => `
+          <div class="suggestion-item" onclick="selectZone('${zone.num}', '${zone.name.trim()}')">  
+            ${zone.num} - ${zone.name.trim()}
+          </div>
+        `)
+        .join('');
+        autocompleteZONEDropdown.style.display = 'block';
+    } else {
+      autocompleteZONEDropdown.style.display = 'none';
+    }
+  }
+  
+  // 選擇建議選項
+  function selectZone(ZONENumber) {
+    ZONENumberInput.value = ZONENumber;
+    // 如果需要，也可以自動填充bus name欄位
+    const ZONENameInput = document.querySelector('input[name="ZONEName"]');
+
+    autocompleteZONEDropdown.style.display = 'none';
+  }
+  </script> 
+
+<script>
+  // Owner
+  window.ownerData = window.ownerData || [];
+  // let busData = [];
+  const OwnerNumberInput = document.getElementById('OwnerNumberInput');
+  const autocompleteOwnerDropdown = document.getElementById('autocompleteOwnerDropdown');
+  
+  // 當點擊文字框時觸發API請求
+  OwnerNumberInput.addEventListener('focus', async () => {
+    if (ownerData.length === 0) {
+      try {
+        const username = '{{ USER }}';  // 從Django模板獲取用戶名
+        const response = await fetch(`/api/owner-list-of-api/?year=latest&user=${username}&labeltype=owner`);
+        const jsonResponse = await response.json();
+        if (jsonResponse.data) {  // 修改這裡來匹配你的API格式
+          ownerData = jsonResponse.data;
+          // console.log('處理後的 ownerData', ownerData);
+          showOwnerSuggestions(OwnerNumberInput.value);
+        }
+      } catch (error) {
+        console.error('Error fetching area list:', error);
+      }
+    } else {
+      showOwnerSuggestions(OwnerNumberInput.value);
+    }
+  });
+  
+  // 監聽輸入變化
+  OwnerNumberInput.addEventListener('input', () => {
+    showOwnerSuggestions(OwnerNumberInput.value);
+  });
+  
+  // 點擊文件其他地方時關閉下拉選單
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-container')) {
+      autocompleteOwnerDropdown.style.display = 'none';
+    }
+  });
+  
+  // 顯示建議選項
+  function showOwnerSuggestions(inputValue) {
+    const filteredData = ownerData.filter(owner => {
+      const ownerNumber = owner.num.toString();  // 修改這裡來匹配你的API格式
+      return ownerNumber.includes(inputValue);
+    });
+  
+    if (filteredData.length > 0) {
+      autocompleteOwnerDropdown.innerHTML = filteredData
+        .map(owner => `
+          <div class="suggestion-item" onclick="selectOwner('${owner.num}', '${owner.name.trim()}')">  
+            ${owner.num} - ${owner.name.trim()}
+          </div>
+        `)
+        .join('');
+        autocompleteOwnerDropdown.style.display = 'block';
+    } else {
+      autocompleteOwnerDropdown.style.display = 'none';
+    }
+  }
+  
+  // 選擇建議選項
+  function selectOwner(OwnerNumber, ) {
+    OwnerNumberInput.value = OwnerNumber;
+
+    autocompleteOwnerDropdown.style.display = 'none';
+  }
+  </script>    
+{% endblock %}

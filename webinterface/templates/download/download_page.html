@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="inner-page">
+    <div class="container">
+      <p>
+          <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;" method="POST" name="powerflow_buttom" action={% url "download_powerflow_page" %}>
+              {% csrf_token %}
+
+              <input type="submit" name="download_powerflow" id="submit_style" value="進入下載電力潮流檔案頁面"/><br></br>               
+          </form>        
+          <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;" method="POST" name="powerflow_buttom" action={% url "download_errorcircuit_page" %}>
+              {% csrf_token %}
+
+    
+              <input type="submit" name="download_errorcircuit" id="submit_style" value="進入下載故障電流檔案頁面"/><br></br>
+            
+          </form>
+          <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;" method="POST" name="powerflow_buttom" action={% url "download_savefile_page" %}>
+            {% csrf_token %}
+            <input type="submit" name="download_savefile" id="submit_style" value="進入sav檔案下載頁面"/>
+          </form>   
+
+          <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;" method="POST" name="idv_buttom" action={% url "download_idvfile_page" %}>
+            {% csrf_token %}
+            <input type="submit" name="download_idvfile" id="submit_style" value="進入idv檔案下載頁面"/>
+          </form>  
+
+          <form style="width: 100%;padding: 10px;text-align: center;margin: auto;font-size:12pt;" method="POST" name="dynamic_buttom" action={% url "download_dynamic_page" %}>
+            {% csrf_token %}
+            <input type="submit" name="download_dynamic" id="submit_style" value="進入dynamic out檔案下載頁面"/>
+          </form>                                       
+      </p>
+    </div>
+  </section>
+{% endblock %}
