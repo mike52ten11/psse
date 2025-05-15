@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "D:\Mike\Work_space\業務\電力室合作\上傳github\psse\webinterface\views.py", line 342, in background_task
+    args, logger_PowerflowFunction = MyFunctions(request).run_powerflow()
+  File "D:\Mike\Work_space\業務\電力室合作\上傳github\psse\webinterface\my_functions.py", line 586, in run_powerflow
+    ,confile_type=case_sub)
+  File "D:\Mike\Work_space\業務\電力室合作\上傳github\psse\webinterface\src\run_powerflow.py", line 314, in RUN_PowerFlow
+    return mis,logger_PowerflowFunction
+NameError: name 'logger_PowerflowFunction' is not defined

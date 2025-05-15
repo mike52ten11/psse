@@ -22,9 +22,9 @@ def powerflow_sub_flow(username,savfile,powerflow_folder,Source_File,target,busn
     b = psspy.fnsl([1,0,0,1,1,0,0,0])#第二次[1,0,0,1,1,0,0,0]
     
     psspy.dfax_2(   [1,1,0]
-                    ,r"%s" %f"{powerflow_folder}/{savfile}/{savfile}.sub"
-                    ,r"%s" %f"{powerflow_folder}/{savfile}/{savfile}.mon"
-                    ,r"%s" %f"{powerflow_folder}/{savfile}/{savfile}.con"
+                    ,r"%s" %f"{powerflow_folder}/{savfile}.sub"
+                    ,r"%s" %f"{powerflow_folder}/{savfile}.mon"
+                    ,r"%s" %f"{powerflow_folder}/{savfile}.con"
                     ,r"%s" %f"{target}/{busnum}"
                     )    
     psspy.accc_with_dsp_3( 0.5,[1,0,0,1,0,1,0,0,0,0,0]
@@ -35,9 +35,9 @@ def powerflow_sub_flow(username,savfile,powerflow_folder,Source_File,target,busn
     # psspy.rate_2(0,1,1,1,1,0, 100.0)#看limit有沒有>100
     psspy.save(f'{target}/close_{busnum}.sav')
     psspy.recn(busnum)#開busnum
-    print(f"{powerflow_folder}/{savfile}/{savfile}.sub")
-    print(f"{powerflow_folder}/{savfile}/{savfile}.mon")
-    print(f"{powerflow_folder}/{savfile}/{savfile}.con")
+    print(f"{powerflow_folder}/{savfile}.sub")
+    print(f"{powerflow_folder}{savfile}.mon")
+    print(f"{powerflow_folder}{savfile}.con")
     print(f"{target}/{busnum}")
 
 

@@ -52,10 +52,12 @@ def subline_161kv_logic(zonenum, areanum, allbus):
 
     if zonenum==[]:
         for area in areanum:
-
+            
             index = np.where(allbus["areanum"]==area)
-            for busnumindex in index:
+            
+            for busnumindex in index[0]:
                 busnum = allbus["num"][busnumindex].astype(int)
+                
                 if (busnum>7269 or busnum==7269) and (busnum<7999 or busnum==7999):
                     busname = allbus["name"][busnumindex]
                     for other_condition in other_conditionlist:
@@ -69,6 +71,7 @@ def subline_161kv_logic(zonenum, areanum, allbus):
 
             index = np.where(allbus["zonenum"]==zone)            
             for busnumindex in index[0]:
+                
                 busnum = allbus["num"][busnumindex].astype(int)
                 
                 if (busnum>7269 or busnum==7269) and (busnum<7999 or busnum==7999):
@@ -79,17 +82,17 @@ def subline_161kv_logic(zonenum, areanum, allbus):
         return zone_set
      
     else:
-
+        all_busname = allbus["name"][0]
         for area in areanum:
 
             index = np.where(allbus["areanum"]==area)
             for busnumindex in index:
-                busnum = allbus["num"][busnumindex].astype(int)
-                if (busnum>7269 or busnum==7269) and (busnum<7999 or busnum==7999):
-                    busname = allbus["name"][busnumindex]
-                    for other_condition in other_conditionlist:
-                        if re.search(other_condition, busname):
-                            area_set.add(busnum)
+                for busnum in allbus["num"][busnumindex].astype(int):
+                    if (busnum>7269 or busnum==7269) and (busnum<7999 or busnum==7999):
+                        busname = all_busname[busnumindex]
+                        for other_condition in other_conditionlist:
+                            if re.search(other_condition, busname):
+                                area_set.add(busnum)
 
         for zone in zonenum:
 

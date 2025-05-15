@@ -346,7 +346,8 @@ def powerflow(request, *args):
             cache.set(f'powerflowsub_result_{user.username}', ['powerflowsub',args['powerflow_sub_messages']['mismatch']], 30)  # 30秒過期       
             print('background_task = ',args)
         except Exception as err:
-
+                
+            traceback.print_exc()
             cache.set(f'powerflow_result_{request.user.username}', ['error',err], 10)  # 10秒過期
             cache.set(f'powerflowsub_result_{request.user.username}', ['error',err], 10)  # 10秒過期
                        
